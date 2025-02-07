@@ -5,46 +5,66 @@
 
 #include <SDLRaycaster.h>
 
-void	draw_minimap(t_game *game)
+#include <SDL2/SDL.h>
+
+void draw_cercle(SDL_Renderer *renderer, int centerX, int centerY, int radius) 
 {
-	int			size;
-	t_float_xy	minimap_corner;
-	t_float_xy	start;
-	int			x, y;
-	float		pixels_per_unit;
+	int x = 0;
+	int y = radius;
+	int d = 3 - (2 * radius);
 
-	start.x = PLAYER[LEVEL]->x - 10;
-	start.y = PLAYER[LEVEL]->y - 10;
-	minimap_corner.y = WIND_HEIGHT / 30;
-	minimap_corner.x = minimap_corner.y;
-	size = WIND_WIDTH / 8;
-	pixels_per_unit = size / 10.0f;
+	while (x <= y) {
+		SDL_RenderDrawPoint(renderer, centerX + x, centerY + y);
+		SDL_RenderDrawPoint(renderer, centerX - x, centerY + y);
+		SDL_RenderDrawPoint(renderer, centerX + x, centerY - y);
+		SDL_RenderDrawPoint(renderer, centerX - x, centerY - y);
+		SDL_RenderDrawPoint(renderer, centerX + y, centerY + x);
+		SDL_RenderDrawPoint(renderer, centerX - y, centerY + x);
+		SDL_RenderDrawPoint(renderer, centerX + y, centerY - x);
+		SDL_RenderDrawPoint(renderer, centerX - y, centerY - x);
 
-	y = minimap_corner.y;
-	while (y < minimap_corner.y + size)
-	{
-		x = minimap_corner.x;
-		while (x < minimap_corner.x + size)
-		{
-			int map_x = (int)floorf(start.x + (x - minimap_corner.x) / pixels_per_unit);
-			int map_y = (int)floorf(start.y + (y - minimap_corner.y) / pixels_per_unit);
-
-			if (MAPS[LEVEL][map_y] && MAPS[LEVEL][map_y][map_x])
-			{
-				if (MAPS[LEVEL][map_y][map_x] == EMPTY)
-					SDL_SetRenderDrawColor(RENDERER, 255, 255, 0, 255);
-				if (MAPS[LEVEL][map_y][map_x] == WALL)
-					SDL_SetRenderDrawColor(RENDERER, 128, 128, 128, 255);
-				if (MAPS[LEVEL][map_y][map_x] == DOOR_CLOSED)
-					SDL_SetRenderDrawColor(RENDERER, 139, 69, 19, 255);
-				SDL_RenderDrawPoint(RENDERER, x, y);
-			}
-			x++;
+		if (d < 0) {
+			d += (4 * x) + 6;
+		} else {
+			d += (4 * (x - y)) + 10;
+			y--;
 		}
-		y++;
+		x++;
 	}
-	SDL_RenderPresent(RENDERER);
 }
+
+void draw_minimap(t_game *game)
+{
+    int x, y;
+    // Set starting position for rendering at the top-left (0,0)
+    // Loop through the entire map (until we hit NULL)
+    for (y = 0; MAPS[LEVEL][y] != NULL; y++)
+    {
+        for (x = 0; MAPS[LEVEL][y][x] != '\0'; x++)
+        {
+            SDL_Rect cell = {x * MINIMAP_BLOCK_SIZE, y * MINIMAP_BLOCK_SIZE, MINIMAP_BLOCK_SIZE, MINIMAP_BLOCK_SIZE };
+
+            // Set the correct color based on the map cell type
+            if (MAPS[LEVEL][y][x] == EMPTY)
+                SDL_SetRenderDrawColor(RENDERER, 255, 255, 0, 255);  // Yellow for empty
+            else if (MAPS[LEVEL][y][x] == WALL)
+                SDL_SetRenderDrawColor(RENDERER, 128, 128, 128, 255); // Gray for walls
+            else if (MAPS[LEVEL][y][x] == DOOR_CLOSED)
+                SDL_SetRenderDrawColor(RENDERER, 139, 69, 19, 255);   // Brown for doors
+
+            SDL_RenderFillRect(RENDERER, &cell);
+        }
+    }
+
+    SDL_SetRenderDrawColor(RENDERER, 255, 0, 0, 255); // Red for player
+    draw_cercle(RENDERER, PLAYER[LEVEL]->x * MINIMAP_BLOCK_SIZE, PLAYER[LEVEL]->y * MINIMAP_BLOCK_SIZE, MINIMAP_BLOCK_SIZE / 4);
+	SDL_RenderDrawLine(RENDERER, PLAYER[LEVEL]->x * MINIMAP_BLOCK_SIZE, PLAYER[LEVEL]->y * MINIMAP_BLOCK_SIZE, 
+	PLAYER[LEVEL]->x * MINIMAP_BLOCK_SIZE + (PLAYER[LEVEL]->dir.x * MINIMAP_BLOCK_SIZE), 
+	PLAYER[LEVEL]->y * MINIMAP_BLOCK_SIZE + (PLAYER[LEVEL]->dir.y * MINIMAP_BLOCK_SIZE));
+
+    SDL_RenderPresent(RENDERER);
+}
+
 
 void	render_next_frame(t_game *game)
 {

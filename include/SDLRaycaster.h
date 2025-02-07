@@ -13,12 +13,15 @@
 
 //==============================MACROS
 // SETTINGS
-#define FPS_CAP        60
+# define FPS_CAP				60
+# define PLAYER_SPEED			30
+# define PLAYER_ROTATION_SPEED	0.1
 
 // DEBUG
 # define PRINT_ENTITIES FALSE
-# define PRINT_MAPS FALSE
+# define PRINT_MAPS TRUE
 # define SHOW_MINIMAP TRUE
+# define MINIMAP_BLOCK_SIZE 25
 
 // MAP CHARACTERS
 # define WALL			'#'
@@ -132,6 +135,9 @@ t_game	*game_init();
 
 // RENDER
 void	render_next_frame(t_game *game);
+
+// UPDATE ENTITIES
+void	update_entities(t_game *game);
 
 // UTILS
 char	*get_next_line(int fd);
