@@ -13,8 +13,8 @@ void	draw_minimap(t_game *game)
 	int			x, y;
 	float		pixels_per_unit;
 
-	start.x = PLAYER[I]->x - 10;
-	start.y = PLAYER[I]->y - 10;
+	start.x = PLAYER[LEVEL]->x - 10;
+	start.y = PLAYER[LEVEL]->y - 10;
 	minimap_corner.y = WIND_HEIGHT / 30;
 	minimap_corner.x = minimap_corner.y;
 	size = WIND_WIDTH / 8;
@@ -29,13 +29,13 @@ void	draw_minimap(t_game *game)
 			int map_x = (int)floorf(start.x + (x - minimap_corner.x) / pixels_per_unit);
 			int map_y = (int)floorf(start.y + (y - minimap_corner.y) / pixels_per_unit);
 
-			if (MAPS[I][map_y] && MAPS[I][map_y][map_x])
+			if (MAPS[LEVEL][map_y] && MAPS[LEVEL][map_y][map_x])
 			{
-				if (MAPS[I][map_y][map_x] == EMPTY)
+				if (MAPS[LEVEL][map_y][map_x] == EMPTY)
 					SDL_SetRenderDrawColor(RENDERER, 255, 255, 0, 255);
-				if (MAPS[I][map_y][map_x] == WALL)
+				if (MAPS[LEVEL][map_y][map_x] == WALL)
 					SDL_SetRenderDrawColor(RENDERER, 128, 128, 128, 255);
-				if (MAPS[I][map_y][map_x] == DOOR_CLOSED)
+				if (MAPS[LEVEL][map_y][map_x] == DOOR_CLOSED)
 					SDL_SetRenderDrawColor(RENDERER, 139, 69, 19, 255);
 				SDL_RenderDrawPoint(RENDERER, x, y);
 			}

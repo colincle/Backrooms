@@ -129,8 +129,8 @@ void	game_struct_init(t_game *game)
 	init_maps(game);
 	print_all_maps(game);
 	init_entities(game);
-	print_all_maps(game);
 	print_entities(game);
+	KEYS = malloc(sizeof(int) *  HOW_MANY_KEYS);
 }
 
 void	graphics_init(t_game *game)

@@ -37,6 +37,13 @@
 # define DOOR_CLOSING	'd'
 # define DOOR_OPENING	'u'
 
+// KEYS
+# define W 0
+# define A 1
+# define S 2
+# define D 3
+# define HOW_MANY_KEYS 4
+
 // FRAMES
 #define FRAME_DELAY    (1000.0f / FPS_CAP)
 
@@ -72,9 +79,10 @@ typedef struct s_game
 	SDL_Window		*window;
 	SDL_Renderer	*renderer;
 	SDL_Event		event;
+	int				*keys;
 	int				wind_height;
 	int				wind_width;
-	int				i;
+	int				level;
 	t_entity		**player;
 	t_entity		***enemy;
 	t_frames		*frames;
@@ -85,9 +93,10 @@ typedef struct s_game
 # define WINDOW game->window
 # define RENDERER game->renderer
 # define EVENT game->event
+# define KEYS game->keys
 # define WIND_HEIGHT game->wind_height
 # define WIND_WIDTH game->wind_width
-# define I game->i
+# define LEVEL game->level
 # define PLAYER game->player
 # define ENEMY game->ENEMY
 # define FPS game->fps

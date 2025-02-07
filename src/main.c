@@ -31,12 +31,13 @@ void	game_loop(t_game *game)
 	int		running;
 	void (*chapter[])(t_game *game, int *running) = {chapter_1, chapter_2, chapter_3, chapter_4, chapter_5};
 	running = TRUE;
-	I = 0;
+	LEVEL = 0;
 	while (running)
 	{
 		FRAME_START = SDL_GetTicks();
-		chapter[I](game, &running);
+		chapter[LEVEL](game, &running);
 		handle_events(game, &running);
+		update_entities(game);
 		render_next_frame(game);
 		frame_sync(game);
 	}
