@@ -1,6 +1,6 @@
 TARGET = SDLRaycaster
 CC = gcc
-CFLAGS = -Wall -Wextra -Ofast -march=native -flto -ffast-math -funroll-loops -fno-exceptions -fomit-frame-pointer -Wno-deprecated-declarations -arch x86_64
+CFLAGS = -Wall -Wextra #-Ofast -march=native -flto -ffast-math -funroll-loops -fno-exceptions -fomit-frame-pointer -Wno-deprecated-declarations -arch x86_64
 LDFLAGS = -arch x86_64 -L$(LIBS)/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -flto \
           -framework Cocoa -framework IOKit -framework CoreVideo -framework CoreFoundation \
           -framework AudioToolbox -framework ForceFeedback -framework GameController \

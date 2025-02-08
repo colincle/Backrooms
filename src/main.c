@@ -13,23 +13,36 @@ void	quit_game(t_game *game)
 	cleanup(game);
 }
 
-void	frame_sync(t_game *game)
+void	manage_fps(t_game *game)
 {
-	FRAME_TIME = SDL_GetTicks() - FRAME_START;
-	if (FRAME_TIME < FRAME_DELAY)
-	{
-		SDL_Delay((Uint32)(FRAME_DELAY - FRAME_TIME));
-		while (1)
-		{
-			if ((SDL_GetTicks() - FRAME_START) < FRAME_DELAY)
-				continue ;
-			break ;
-		}
-	}
-	FPS = (FRAME_TIME > 0) ? (1000.0f / FRAME_TIME) : 1000.0f;
-	if (SHOW_FPS)
-		show_fps(game);
+	static Uint32	last_time = 0;
+	Uint32			start_time;
+	Uint32			end_time;
+	float			elapsed_time;
+	float			frame_time_goal;
+	float			wait_time;
+	float			total_frame_time;
+
+	start_time = SDL_GetTicks();
+	if (last_time == 0)
+		last_time = start_time;
+	elapsed_time = (start_time - last_time) / 1000.0f;
+	if (elapsed_time > 0.0001f)
+		game->fps = 1.0f / elapsed_time;
+	else
+		game->fps = (float)FPS_CAP;
+	frame_time_goal = 1.0f / (float)FPS_CAP;
+	wait_time = frame_time_goal - elapsed_time;
+	if (wait_time > 0)
+		SDL_Delay((Uint32)(wait_time * 1000));
+	end_time = SDL_GetTicks();
+	total_frame_time = (end_time - last_time) / 1000.0f;
+	game->fps = 1.0f / total_frame_time;
+	printf("TRUE FPS: %.2f\n", game->fps);
+	printf("goal %f frame %f wait %f\n",
+		frame_time_goal, total_frame_time, wait_time);
 	fflush(stdout);
+	last_time = end_time;
 }
 
 void	game_loop(t_game *game)
@@ -41,12 +54,11 @@ void	game_loop(t_game *game)
 	LEVEL = 0;
 	while (running)
 	{
-		FRAME_START = SDL_GetTicks();
+		manage_fps(game);
 		chapter[LEVEL](game, &running);
 		handle_events(game, &running);
 		update_entities(game);
 		render_next_frame(game);
-		frame_sync(game);
 	}
 }
 

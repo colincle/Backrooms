@@ -72,8 +72,6 @@ void	free_all_maps(t_game *game)
 
 void	cleanup(t_game *game)
 {
-	if (game->frames)
-		free(game->frames);
 	free_all_maps(game);
 	free_entities(game);
 	free(game);

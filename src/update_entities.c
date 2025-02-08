@@ -21,26 +21,24 @@ void	move_player(t_game *game, int key)
 
 void	rotate_player(t_game *game, int key)
 {
-	float	old_dir_x;
-	float	length;
+	double	old_dir_x;
+	double	frame_time = 1.0 / game->fps;
+	double	angle = ROTATION_SPEED * frame_time;
+	double	sin_rot = sin(angle);
+	double	cos_rot = cos(angle);
 
 	old_dir_x = PLAYER_DIR_X;
-	length = sqrtf(PLAYER_DIR_X * PLAYER_DIR_X + PLAYER_DIR_Y * PLAYER_DIR_Y);
 	if (key == D)
 	{
-		PLAYER_DIR_X = PLAYER_DIR_X - PLAYER_DIR_Y * PLAYER_ROTATION_SPEED;
-		PLAYER_DIR_Y = PLAYER_DIR_Y + old_dir_x * PLAYER_ROTATION_SPEED;
+		PLAYER_DIR_X = (PLAYER_DIR_X * cos_rot - PLAYER_DIR_Y * sin_rot);
+		PLAYER_DIR_Y = (old_dir_x * sin_rot + PLAYER_DIR_Y * cos_rot);
 	}
 	if (key == A)
 	{
-		PLAYER_DIR_X = PLAYER_DIR_X + PLAYER_DIR_Y * PLAYER_ROTATION_SPEED;
-		PLAYER_DIR_Y = PLAYER_DIR_Y - old_dir_x * PLAYER_ROTATION_SPEED;
+		PLAYER_DIR_X = (PLAYER_DIR_X * cos_rot + PLAYER_DIR_Y * sin_rot);
+		PLAYER_DIR_Y = (-old_dir_x * sin_rot + PLAYER_DIR_Y * cos_rot);
 	}
-	if (length > 0)
-	{
-		PLAYER_DIR_X /= length;
-		PLAYER_DIR_Y /= length;
-	}
+	set_player_cam(game, LEVEL);
 }
 
 void	update_player(t_game *game)

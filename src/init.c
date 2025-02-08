@@ -5,6 +5,15 @@
 
 #include <SDLRaycaster.h>
 
+void	set_player_cam(t_game *game, int i)
+{
+	double	fov_rad;
+
+	fov_rad = (FOV * M_PI) / 180.0;
+	PLAYER[i]->cam.x = -PLAYER[i]->dir.y * tan(fov_rad / 2);
+	PLAYER[i]->cam.y = PLAYER[i]->dir.x * tan(fov_rad / 2);
+}
+
 void	find_entities(t_game *game, int i)
 {
 	int	x;
@@ -90,6 +99,7 @@ void	init_entities(t_game *game)
 	{
 		game->enemy[i] = NULL;
 		find_entities(game, i);
+		set_player_cam(game, i);
 		i++;
 	}
 }
@@ -120,12 +130,6 @@ void	init_maps(t_game *game)
 
 void	game_struct_init(t_game *game)
 {
-	game->frames = malloc(sizeof(t_frames));
-	if (!game->frames)
-	{
-		cleanup(game);
-		exit(EXIT_FAILURE);
-	}
 	init_maps(game);
 	print_all_maps(game);
 	init_entities(game);
