@@ -11,7 +11,7 @@ void	free_entities(t_game *game)
 	int	e;
 
 	if (!game)
-		return;
+		return ;
 	if (game->player)
 	{
 		i = 0;
@@ -39,30 +39,33 @@ void	free_entities(t_game *game)
 	}
 }
 
-void free_all(char **array) 
+void	free_all(char **array)
 {
-	if (!array) return;
+	int		i;
 
-	int i = 0;
-	while (array[i]) {
+	i = 0;
+	if (!array)
+		return ;
+	while (array[i])
+	{
 		free(array[i]);
 		i++;
 	}
 	free(array);
 }
 
-void free_all_maps(t_game *game)
+void	free_all_maps(t_game *game)
 {
-	if (!game->maps)
-		return;
+	int		i;
 
-	int i = 0;
+	i = 0;
+	if (!game->maps)
+		return ;
 	while (game->maps[i])
 	{
 		free_all(game->maps[i]);
 		i++;
 	}
-
 	free(game->maps);
 	game->maps = NULL;
 }

@@ -9,38 +9,38 @@ void	move_player(t_game *game, int key)
 {
 	if (key == W)
 	{
-		PLAYER[LEVEL]->x = PLAYER[LEVEL]->x + (PLAYER[LEVEL]->dir.x * (PLAYER_SPEED) * (1.0 / FPS));
-		PLAYER[LEVEL]->y = PLAYER[LEVEL]->y + (PLAYER[LEVEL]->dir.y * (PLAYER_SPEED) * (1.0 / FPS));
+		PLAYER_X = PLAYER_X + (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
+		PLAYER_Y = PLAYER_Y + (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
 	}
 	if (key == S)
 	{
-		PLAYER[LEVEL]->x = PLAYER[LEVEL]->x - (PLAYER[LEVEL]->dir.x * (PLAYER_SPEED) * (1.0 / FPS));
-		PLAYER[LEVEL]->y = PLAYER[LEVEL]->y - (PLAYER[LEVEL]->dir.y * (PLAYER_SPEED) * (1.0 / FPS));
+		PLAYER_X = PLAYER_X - (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
+		PLAYER_Y = PLAYER_Y - (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
 	}
-	printf("x %f y %f%c------------------------%c", PLAYER[LEVEL]->x, PLAYER[LEVEL]->y, 10, 10); fflush(stdout); //debug
 }
 
 void	rotate_player(t_game *game, int key)
 {
-	float old_dir_x;
-    float length;
+	float	old_dir_x;
+	float	length;
 
-	old_dir_x = PLAYER[LEVEL]->dir.x;
-    length = sqrtf(PLAYER[LEVEL]->dir.x * PLAYER[LEVEL]->dir.x + PLAYER[LEVEL]->dir.y * PLAYER[LEVEL]->dir.y);
+	old_dir_x = PLAYER_DIR_X;
+	length = sqrtf(PLAYER_DIR_X * PLAYER_DIR_X + PLAYER_DIR_Y * PLAYER_DIR_Y);
 	if (key == D)
 	{
-		PLAYER[LEVEL]->dir.x = PLAYER[LEVEL]->dir.x - PLAYER[LEVEL]->dir.y * PLAYER_ROTATION_SPEED;
-		PLAYER[LEVEL]->dir.y = PLAYER[LEVEL]->dir.y + old_dir_x * PLAYER_ROTATION_SPEED;
+		PLAYER_DIR_X = PLAYER_DIR_X - PLAYER_DIR_Y * PLAYER_ROTATION_SPEED;
+		PLAYER_DIR_Y = PLAYER_DIR_Y + old_dir_x * PLAYER_ROTATION_SPEED;
 	}
 	if (key == A)
 	{
-		PLAYER[LEVEL]->dir.x = PLAYER[LEVEL]->dir.x + PLAYER[LEVEL]->dir.y * PLAYER_ROTATION_SPEED;
-		PLAYER[LEVEL]->dir.y = PLAYER[LEVEL]->dir.y - old_dir_x * PLAYER_ROTATION_SPEED;
+		PLAYER_DIR_X = PLAYER_DIR_X + PLAYER_DIR_Y * PLAYER_ROTATION_SPEED;
+		PLAYER_DIR_Y = PLAYER_DIR_Y - old_dir_x * PLAYER_ROTATION_SPEED;
 	}
-    if (length > 0) {
-        PLAYER[LEVEL]->dir.x /= length;
-        PLAYER[LEVEL]->dir.y /= length;
-    }
+	if (length > 0)
+	{
+		PLAYER_DIR_X /= length;
+		PLAYER_DIR_Y /= length;
+	}
 }
 
 void	update_player(t_game *game)

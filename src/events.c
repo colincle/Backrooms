@@ -41,7 +41,7 @@ void	handle_events(t_game *game, int *running)
 		{
 			WIND_WIDTH = EVENT.window.data1;
 			WIND_HEIGHT = EVENT.window.data2;
-			if (WIND_WIDTH / WIND_HEIGHT != 1,7777)
+			if (WIND_WIDTH / WIND_HEIGHT != 1.7777)
 			{
 				WIND_HEIGHT = WIND_WIDTH * 9 / 16;
 				SDL_SetWindowSize(WINDOW, WIND_WIDTH, WIND_HEIGHT);

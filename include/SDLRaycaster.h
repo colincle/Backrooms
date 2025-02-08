@@ -1,5 +1,5 @@
 #ifndef SDLRAYCASTER_H
-#define SDLRAYCASTER_H
+# define SDLRAYCASTER_H
 
 # include <SDL2/SDL.h>
 # include <SDL2/SDL_image.h>
@@ -18,9 +18,10 @@
 # define PLAYER_ROTATION_SPEED	0.1
 
 // DEBUG
-# define PRINT_ENTITIES FALSE
-# define PRINT_MAPS TRUE
-# define SHOW_MINIMAP TRUE
+# define PRINT_ENTITIES 	FALSE
+# define PRINT_MAPS 		FALSE
+# define SHOW_MINIMAP 		TRUE
+# define SHOW_FPS			TRUE
 # define MINIMAP_BLOCK_SIZE 25
 
 // MAP CHARACTERS
@@ -48,13 +49,13 @@
 # define HOW_MANY_KEYS 4
 
 // FRAMES
-#define FRAME_DELAY    (1000.0f / FPS_CAP)
+# define FRAME_DELAY    (1000.0f / FPS_CAP)
 
 // OTHERS
 # define TRUE			1
 # define FALSE			0
 # define NUMBER_OF_MAPS	5
-# define BUFFER_SIZE 64
+# define BUFFER_SIZE 	64
 
 //==============================STRUCTS
 
@@ -77,6 +78,30 @@ typedef struct s_frames
 	Uint32	frame_start;
 }			t_frames;
 
+typedef struct s_raycaster
+{
+	int		x;
+	double	pos_x;
+	double	pos_y;
+	int		map_x;
+	int		map_y;
+	double	cam_x;
+	double	ray_dir_x;
+	double	ray_dir_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	perp_wall_dist;
+	double	wall_hit_y;
+	double	wall_hit_x;
+	double	offset;
+	int		step_x;
+	int		step_y;
+	int		side;
+	int		wall_dir;
+}					t_raycaster;
+
 typedef struct s_game
 {
 	SDL_Window		*window;
@@ -89,7 +114,7 @@ typedef struct s_game
 	t_entity		**player;
 	t_entity		***enemy;
 	t_frames		*frames;
-	char 			***maps;
+	char			***maps;
 	float			fps;
 }			t_game;
 
@@ -102,6 +127,10 @@ typedef struct s_game
 # define LEVEL game->level
 # define PLAYER game->player
 # define ENEMY game->ENEMY
+# define PLAYER_X game->player[(LEVEL)]->x
+# define PLAYER_Y game->player[(LEVEL)]->y
+# define PLAYER_DIR_X game->player[(LEVEL)]->dir.x
+# define PLAYER_DIR_Y game->player[(LEVEL)]->dir.y
 # define FPS game->fps
 # define MAPS game->maps
 # define FRAME_START game->frames->frame_start
@@ -117,11 +146,16 @@ void	chapter_5(t_game *game, int *running);
 
 // CLEANUP
 void	cleanup(t_game *game);
-void 	free_all(char **array);
+void	free_all(char **array);
 
 //DEBUG TOOLS
 void	print_all_maps(t_game *game);
-void 	print_entities(t_game *game);
+void	print_entities(t_game *game);
+void	draw_minimap(t_game *game);
+void	show_fps(t_game *game);
+
+// DRAW
+void	draw_cercle(SDL_Renderer *renderer, int centerX, int centerY, int radius);
 
 // EVENTS
 void	handle_events(t_game *game, int *running);
@@ -131,7 +165,7 @@ char	**get_map(char *path);
 char	*get_path(int i);
 
 // INIT
-t_game	*game_init();
+t_game	*game_init(void);
 
 // RENDER
 void	render_next_frame(t_game *game);
@@ -141,6 +175,6 @@ void	update_entities(t_game *game);
 
 // UTILS
 char	*get_next_line(int fd);
-char 	*strjoin(const char *s1, const char *s2);
+char	*strjoin(const char *s1, const char *s2);
 
 #endif

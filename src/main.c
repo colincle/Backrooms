@@ -13,23 +13,30 @@ void	quit_game(t_game *game)
 	cleanup(game);
 }
 
-void frame_sync(t_game *game)
+void	frame_sync(t_game *game)
 {
 	FRAME_TIME = SDL_GetTicks() - FRAME_START;
 	if (FRAME_TIME < FRAME_DELAY)
 	{
 		SDL_Delay((Uint32)(FRAME_DELAY - FRAME_TIME));
-		while ((SDL_GetTicks() - FRAME_START) < FRAME_DELAY);
+		while (1)
+		{
+			if ((SDL_GetTicks() - FRAME_START) < FRAME_DELAY)
+				continue ;
+			break ;
+		}
 	}
 	FPS = (FRAME_TIME > 0) ? (1000.0f / FRAME_TIME) : 1000.0f;
+	if (SHOW_FPS)
+		show_fps(game);
 	fflush(stdout);
 }
-
 
 void	game_loop(t_game *game)
 {
 	int		running;
-	void (*chapter[])(t_game *game, int *running) = {chapter_1, chapter_2, chapter_3, chapter_4, chapter_5};
+	void	(*chapter[])(t_game *game, int *running) = {chapter_1, chapter_2, chapter_3, chapter_4, chapter_5};
+
 	running = TRUE;
 	LEVEL = 0;
 	while (running)
@@ -60,4 +67,3 @@ TO DO
 - Handle collisions
 - Raycast
 */
-		
