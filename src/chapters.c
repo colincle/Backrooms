@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-void	first_time_chapter_called(t_game *game, int *first, int *running)
+static void	first_time_chapter_called(t_game *game, int *first, int *running)
 {
 	(void)game;
 	(void)*running;

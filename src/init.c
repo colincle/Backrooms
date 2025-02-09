@@ -12,13 +12,12 @@ void	set_player_cam(t_game *game, int i)
 	double	aspect_ratio = (double)WIND_WIDTH / (double)WIND_HEIGHT;
 
 	fov_rad = (FOV * M_PI) / 180.0;
-	h_fov_rad = 2 * atan(tan(fov_rad / 2) * aspect_ratio); 
+	h_fov_rad = 2 * atan(tan(fov_rad / 2) * aspect_ratio);
 	PLAYER[i]->cam.x = -PLAYER[i]->dir.y * tan(h_fov_rad / 2);
-	PLAYER[i]->cam.y =  PLAYER[i]->dir.x * tan(h_fov_rad / 2);
+	PLAYER[i]->cam.y = PLAYER[i]->dir.x * tan(h_fov_rad / 2);
 }
 
-
-void	find_entities(t_game *game, int i)
+static void	find_entities(t_game *game, int i)
 {
 	int	x;
 	int	y = 0;
@@ -95,7 +94,7 @@ void	find_entities(t_game *game, int i)
 	game->enemy[i][e] = NULL;
 }
 
-void	init_entities(t_game *game)
+static void	init_entities(t_game *game)
 {
 	int	i = 0;
 
@@ -110,7 +109,7 @@ void	init_entities(t_game *game)
 	}
 }
 
-void	init_maps(t_game *game)
+static void	init_maps(t_game *game)
 {
 	char	*path;
 	int		i = 1;
@@ -134,31 +133,50 @@ void	init_maps(t_game *game)
 	MAPS[NUMBER_OF_MAPS] = NULL;
 }
 
-void	init_vector_grid(t_game *game)
+static void	init_vector_grid(t_game *game)
 {
-	char	*path;
-	int		i = 1;
+	int	i;
+	int	y;
+	int	x;
+	int	width;
 
-	MAPS = malloc(sizeof(char **) * (NUMBER_OF_MAPS + 1));
-	if (!MAPS)
+	i = 0;
+	game->vector_grid = malloc(sizeof(t_float_xy **) * (NUMBER_OF_MAPS + 1));
+	if (!game->vector_grid)
 		return ;
-	while (i <= NUMBER_OF_MAPS)
+	while (game->maps[i])
 	{
-		path = get_path(i);
-		MAPS[i - 1] = get_map(path);
-		free(path);
-		if (!MAPS[i - 1])
-		{
-			free(MAPS);
-			MAPS = NULL;
+		y = 0;
+		while (game->maps[i][y])
+			y++;
+		game->vector_grid[i] = malloc(sizeof(t_float_xy *) * (y + 1));
+		if (!game->vector_grid[i])
 			return ;
+		y = 0;
+		while (game->maps[i][y])
+		{
+			width = 0;
+			while (game->maps[i][y][width])
+				width++;
+			game->vector_grid[i][y] = malloc(sizeof(t_float_xy) * width);
+			if (!game->vector_grid[i][y])
+				return ;
+			x = 0;
+			while (x < width)
+			{
+				game->vector_grid[i][y][x].x = 0;
+				game->vector_grid[i][y][x].y = 0;
+				x++;
+			}
+			y++;
 		}
+		game->vector_grid[i][y] = NULL;
 		i++;
 	}
-	MAPS[NUMBER_OF_MAPS] = NULL;
+	game->vector_grid[i] = NULL;
 }
 
-void	game_struct_init(t_game *game)
+static void	game_struct_init(t_game *game)
 {
 	init_maps(game);
 	print_all_maps(game);
@@ -168,7 +186,7 @@ void	game_struct_init(t_game *game)
 	KEYS = malloc(sizeof(int) * HOW_MANY_KEYS);
 }
 
-void	graphics_init(t_game *game)
+static void	graphics_init(t_game *game)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
@@ -192,6 +210,7 @@ void	graphics_init(t_game *game)
 		cleanup(game);
 		exit(EXIT_FAILURE);
 	}
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
 	SDL_GetWindowSize(WINDOW, &WIND_WIDTH, &WIND_HEIGHT);
 }
 

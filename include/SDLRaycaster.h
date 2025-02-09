@@ -1,15 +1,15 @@
 #ifndef SDLRAYCASTER_H
 # define SDLRAYCASTER_H
 
-# include 				<SDL2/SDL_image.h>
-# include 				<SDL2/SDL_mixer.h>
-# include 				<SDL2/SDL_ttf.h>
-# include 				<SDL2/SDL.h>
-# include 				<stdlib.h>
-# include 				<unistd.h>
-# include 				<limits.h>
-# include 				<stdio.h>
-# include 				<fcntl.h>
+# include <SDL2/SDL_image.h>
+# include <SDL2/SDL_mixer.h>
+# include <SDL2/SDL_ttf.h>
+# include <SDL2/SDL.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <limits.h>
+# include <stdio.h>
+# include <fcntl.h>
 
 //==============================MACROS
 // SETTINGS
@@ -22,7 +22,7 @@
 # define PRINT_ENTITIES FALSE
 # define PRINT_MAPS 	FALSE
 # define SHOW_MINIMAP 	TRUE
-# define SHOW_FPS		FALSE
+# define SHOW_FPS		TRUE
 # define SHOW_DIRECTION	FALSE
 # define SHOW_POSITION	FALSE
 # define SHOW_CAM_PLANE	FALSE
@@ -63,12 +63,24 @@
 # define WEST			0xA52A2A // Red
 
 //==============================STRUCTS
+typedef struct s_point
+{
+	int	x;
+	int	y;
+}	t_point;
 
 typedef struct s_float_xy
 {
 	float				x;
 	float				y;
 }						t_float_xy;
+
+typedef struct s_dda_result
+{
+	t_point				*cells;
+	t_float_xy			dir;
+	int					count;
+}						t_dda_result;
 
 typedef struct s_entity
 {

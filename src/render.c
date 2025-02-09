@@ -5,22 +5,22 @@
 
 #include <SDLRaycaster.h>
 
-void	proto_3d_render(t_game *game, t_raycaster *r)
+static void	proto_3d_render(t_game *game, t_raycaster *r)
 {
 	int	line_height;
 	int	start;
 	int	end;
 
-	r->perp_wall_dist /=2;
+	r->perp_wall_dist /= 2;
 	line_height = game->wind_height / r->perp_wall_dist;
 	start = (game->wind_height - line_height) / 2;
 	end = start + line_height;
-	draw_column(RENDERER, r->x, 0, start - 1, int_to_color(0x808080FF));
+	draw_column(RENDERER, r->x, 0, start, int_to_color(0x808080FF));
 	draw_column(RENDERER, r->x, start++, end++, int_to_color(r->wall_dir));
-	draw_column(RENDERER, r->x, end + 1, game->wind_height, int_to_color(0x808080FF));
+	draw_column(RENDERER, r->x, end, game->wind_height, int_to_color(0x808080FF));
 }
 
-void	analyse_ray_data(t_raycaster *r)
+static void	analyse_ray_data(t_raycaster *r)
 {
 	if (r->side)
 	{
@@ -40,7 +40,7 @@ void	analyse_ray_data(t_raycaster *r)
 	r->wall_dir = WEST;
 }
 
-void	ray_has_hit_wall(t_raycaster *r)
+static void	ray_has_hit_wall(t_raycaster *r)
 {
 	double	inv_ray_dir_x;
 	double	inv_ray_dir_y;
@@ -57,7 +57,7 @@ void	ray_has_hit_wall(t_raycaster *r)
 	r->wall_hit_y = r->pos_y + r->ray_dir_y * perp_dist;
 }
 
-void	perform_raycaster_steps(t_raycaster *r, t_game *game)
+static void	perform_raycaster_steps(t_raycaster *r, t_game *game)
 {
 	char	**map;
 
@@ -89,7 +89,7 @@ void	perform_raycaster_steps(t_raycaster *r, t_game *game)
 	analyse_ray_data(r);
 }
 
-void	init_raycaster_steps(t_raycaster *r)
+static void	init_raycaster_steps(t_raycaster *r)
 {
 	if (r->ray_dir_x < 0)
 	{
@@ -130,7 +130,7 @@ void	init_raycaster(t_raycaster *r, t_game *game)
 		r->delta_dist_y = fabsf(1.0f / r->ray_dir_y);
 }
 
-void	draw_scene(t_game *game)
+static void	draw_scene(t_game *game)
 {
 	t_raycaster	*r;
 
@@ -151,6 +151,8 @@ void	draw_scene(t_game *game)
 
 void	render_next_frame(t_game *game)
 {
+	SDL_RenderClear(RENDERER);
 	draw_scene(game);
 	draw_minimap(game);
+	SDL_RenderPresent(RENDERER);
 }

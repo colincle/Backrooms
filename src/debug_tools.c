@@ -13,9 +13,45 @@ void	debug_statements(t_game *game)
 		printf("dir x = %f dir y = %f\n", PLAYER_DIR_X, PLAYER_DIR_Y);
 	if (SHOW_POSITION)
 		printf("pos x = %f pos y = %f\n", PLAYER_X, PLAYER_Y);
-	if(SHOW_CAM_PLANE)
+	if (SHOW_CAM_PLANE)
 		printf("camera plane x = %f camera plane y = %f\n", PLAYER_CAM_X, PLAYER_CAM_Y);
 }
+
+static void	draw_vectors(t_game *game)
+{
+	int		x;
+	int		y;
+	t_float_xy	vec;
+	SDL_Rect	center;
+
+	for (y = 0; game->maps[LEVEL][y] != NULL; y++)
+	{
+		for (x = 0; game->maps[LEVEL][y][x] != '\0'; x++)
+		{
+			if (game->maps[LEVEL][y][x] != EMPTY)
+				continue;
+			vec = game->vector_grid[LEVEL][y][x];
+			center.x = x * MINIMAP_BLOCK + MINIMAP_BLOCK / 2;
+			center.y = y * MINIMAP_BLOCK + MINIMAP_BLOCK / 2;
+			center.w = 2;
+			center.h = 2;
+			SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
+			SDL_RenderFillRect(RENDERER, &center);
+			if (vec.x == 0 && vec.y == 0)
+			{
+				SDL_RenderDrawLine(RENDERER, center.x - 3, center.y, center.x + 3, center.y);
+				SDL_RenderDrawLine(RENDERER, center.x, center.y - 3, center.x, center.y + 3);
+			}
+			else
+			{
+				SDL_RenderDrawLine(RENDERER, center.x, center.y,
+					center.x + vec.x * MINIMAP_BLOCK / 2,
+					center.y + vec.y * MINIMAP_BLOCK / 2);
+			}
+		}
+	}
+}
+
 void	draw_minimap(t_game *game)
 {
 	int	x;
@@ -42,7 +78,7 @@ void	draw_minimap(t_game *game)
 	SDL_RenderDrawLine(RENDERER, PLAYER_X * MINIMAP_BLOCK, PLAYER_Y * MINIMAP_BLOCK,
 		PLAYER_X * MINIMAP_BLOCK + (PLAYER_DIR_X * MINIMAP_BLOCK),
 		PLAYER_Y * MINIMAP_BLOCK + (PLAYER_DIR_Y * MINIMAP_BLOCK));
-	SDL_RenderPresent(RENDERER);
+	draw_vectors(game);
 }
 
 void	print_entities(t_game *game)
@@ -63,7 +99,7 @@ void	print_entities(t_game *game)
 	{
 		printf("Map %d:\n", i + 1);
 		if (game->player && game->player[i])
-			printf("  Player Start: X = %f, Y = %f, Dir = (%.1f, %.1f)\n",
+			printf("Player Start: X = %f, Y = %f, Dir = (%.1f, %.1f)\n",
 				game->player[i]->x, game->player[i]->y,
 				game->player[i]->dir.x, game->player[i]->dir.y);
 		else
@@ -73,14 +109,14 @@ void	print_entities(t_game *game)
 			e = 0;
 			while (game->enemy[i][e])
 			{
-				printf("  Enemy %d: X = %f, Y = %f, Dir = (%.1f, %.1f)\n",
+				printf("Enemy %d: X = %f, Y = %f, Dir = (%.1f, %.1f)\n",
 					e + 1, game->enemy[i][e]->x, game->enemy[i][e]->y,
 					game->enemy[i][e]->dir.x, game->enemy[i][e]->dir.y);
 				e++;
 			}
 		}
 		else
-			printf("  No Enemies Found\n");
+			printf("No Enemies Found\n");
 		printf("------------------------\n");
 		i++;
 	}

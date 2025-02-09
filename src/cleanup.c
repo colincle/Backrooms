@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-void	free_entities(t_game *game)
+static void	free_entities(t_game *game)
 {
 	int	i;
 	int	e;
@@ -54,7 +54,7 @@ void	free_all(char **array)
 	free(array);
 }
 
-void	free_all_maps(t_game *game)
+static void	free_all_maps(t_game *game)
 {
 	int		i;
 
@@ -70,9 +70,30 @@ void	free_all_maps(t_game *game)
 	game->maps = NULL;
 }
 
+static void	free_vector_grid(t_game *game)
+{
+	int	i;
+	int	y;
+
+	if (!game || !game->vector_grid)
+		return ;
+	i = 0;
+	while (game->vector_grid[i])
+	{
+		y = 0;
+		while (game->vector_grid[i][y])
+			free(game->vector_grid[i][y++]);
+		free(game->vector_grid[i]);
+		i++;
+	}
+	free(game->vector_grid);
+	game->vector_grid = NULL;
+}
+
 void	cleanup(t_game *game)
 {
 	free_all_maps(game);
 	free_entities(game);
+	free_vector_grid(game);
 	free(game);
 }

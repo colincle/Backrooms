@@ -27,7 +27,7 @@ char	*strjoin(const char *s1, const char *s2)
 	return (result);
 }
 
-char	*read_from_file(int fd, char *leftover)
+static char	*read_from_file(int fd, char *leftover)
 {
 	char		*buffer;
 	long long	bytes_read;
@@ -55,7 +55,7 @@ char	*read_from_file(int fd, char *leftover)
 	return (leftover);
 }
 
-char	*find_line(char *leftover)
+static char	*find_line(char *leftover)
 {
 	char	*str;
 	int		i;
@@ -80,7 +80,7 @@ char	*find_line(char *leftover)
 	return (str);
 }
 
-char	*find_leftover(char *leftover)
+static char	*find_leftover(char *leftover)
 {
 	while (*leftover && *leftover != '\n')
 		leftover++;

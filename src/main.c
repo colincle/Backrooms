@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-void	quit_game(t_game *game)
+static void	quit_game(t_game *game)
 {
 	SDL_DestroyWindow(WINDOW);
 	SDL_DestroyRenderer(RENDERER);
@@ -13,7 +13,7 @@ void	quit_game(t_game *game)
 	cleanup(game);
 }
 
-void	manage_fps(t_game *game)
+static void	manage_fps(t_game *game)
 {
 	static Uint32	last_time = 0;
 	Uint32			start_time;
@@ -41,7 +41,26 @@ void	manage_fps(t_game *game)
 	last_time = end_time;
 }
 
-void	game_loop(t_game *game)
+// static void	manage_fps(t_game *game)
+// {
+// 	static Uint32	last_time = 0;
+// 	Uint32			start_time;
+// 	float			elapsed_time;
+// 	static int			frame_count;
+
+// 	start_time = SDL_GetTicks();
+// 	if (last_time == 0)
+// 		last_time = start_time;
+// 	elapsed_time = (start_time - last_time) / 1000.0f;
+// 	game->fps = (elapsed_time > 0.0001f) ? (1.0f / elapsed_time) : 0;
+// 	last_time = start_time;
+// 	frame_count++;
+// 	if (frame_count == 500)
+// 		exit(1);
+// }
+
+
+static void	game_loop(t_game *game)
 {
 	int		running;
 	void	(*chapter[])(t_game *game, int *running) = {chapter_1, chapter_2, chapter_3, chapter_4, chapter_5};
