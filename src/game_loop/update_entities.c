@@ -7,33 +7,50 @@
 
 static void	move_player(t_game *game, int key)
 {
+	float	x;
+	float	y;
+
 	if (key == W)
 	{
-		PLAYER_X = PLAYER_X + (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
-		PLAYER_Y = PLAYER_Y + (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
+		x = PLAYER_X + (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
+		y = PLAYER_Y + (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
 	}
 	if (key == S)
 	{
-		PLAYER_X = PLAYER_X - (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
-		PLAYER_Y = PLAYER_Y - (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
+		x = PLAYER_X - (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
+		y = PLAYER_Y - (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
 	}
+	if (key == A)
+	{
+		x = PLAYER_X + (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
+		y = PLAYER_Y - (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
+	}
+	if (key == D)
+	{
+		x = PLAYER_X - (PLAYER_DIR_Y * (PLAYER_SPEED) * (1.0 / FPS));
+		y = PLAYER_Y + (PLAYER_DIR_X * (PLAYER_SPEED) * (1.0 / FPS));
+	}
+	if (MAPS[LEVEL][(int)PLAYER_Y][(int)x] != WALL)
+		PLAYER_X = x;
+	if (MAPS[LEVEL][(int)y][(int)PLAYER_X] != WALL)
+		PLAYER_Y = y;
 }
 
-static void	rotate_player(t_game *game, int key)
+void	rotate_player(t_game *game, int x)
 {
 	double	old_dir_x;
 	double	frame_time = 1.0 / game->fps;
-	double	angle = ROTATION_SPEED * frame_time;
+	double	angle = abs(x) * MOUSE_SENSITIVITY * frame_time;
 	double	sin_rot = sin(angle);
 	double	cos_rot = cos(angle);
 
 	old_dir_x = PLAYER_DIR_X;
-	if (key == D)
+	if (x > 1)
 	{
 		PLAYER_DIR_X = (PLAYER_DIR_X * cos_rot - PLAYER_DIR_Y * sin_rot);
 		PLAYER_DIR_Y = (old_dir_x * sin_rot + PLAYER_DIR_Y * cos_rot);
 	}
-	if (key == A)
+	if (x < -1)
 	{
 		PLAYER_DIR_X = (PLAYER_DIR_X * cos_rot + PLAYER_DIR_Y * sin_rot);
 		PLAYER_DIR_Y = (-old_dir_x * sin_rot + PLAYER_DIR_Y * cos_rot);
@@ -48,9 +65,9 @@ static void	update_player(t_game *game)
 	if (KEYS[S])
 		move_player(game, S);
 	if (KEYS[A])
-		rotate_player(game, A);
+		move_player(game, A);
 	if (KEYS[D])
-		rotate_player(game, D);
+		move_player(game, D);
 }
 
 void	update_entities(t_game *game)

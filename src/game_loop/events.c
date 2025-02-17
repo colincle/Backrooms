@@ -7,13 +7,13 @@
 
 static void	keydown(t_game *game, SDL_KeyCode code)
 {
-	if (code == SDLK_w && !KEYS[S])
+	if (code == SDLK_w)
 		KEYS[W] = TRUE;
-	if (code == SDLK_a && !KEYS[D])
+	if (code == SDLK_a)
 		KEYS[A] = TRUE;
-	if (code == SDLK_s && !KEYS[W])
+	if (code == SDLK_s)
 		KEYS[S] = TRUE;
-	if (code == SDLK_d && !KEYS[A])
+	if (code == SDLK_d)
 		KEYS[D] = TRUE;
 }
 
@@ -33,11 +33,24 @@ void	handle_events(t_game *game, int *running)
 {
 	while (SDL_PollEvent(&EVENT))
 	{
-		if (EVENT.type == SDL_QUIT)
+		printf("event%c------------------------%c", 10, 10); fflush(stdout); //debug
+		if (EVENT.type == SDL_MOUSEMOTION)
+		{
+			rotate_player(game, EVENT.motion.xrel);
+		}
+		if (EVENT.type == SDL_KEYDOWN)
+		{
+			keydown(game, EVENT.key.keysym.sym);
+		}
+		if (EVENT.type == SDL_KEYUP)
+		{
+			keyup(game, EVENT.key.keysym.sym);
+		}
+		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_ESCAPE)
 		{
 			*running = 0;
 		}
-		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_ESCAPE)
+		if (EVENT.type == SDL_QUIT)
 		{
 			*running = 0;
 		}
@@ -51,9 +64,5 @@ void	handle_events(t_game *game, int *running)
 				SDL_SetWindowSize(WINDOW, WIND_WIDTH, WIND_HEIGHT);
 			}
 		}
-		if (EVENT.type == SDL_KEYDOWN)
-			keydown(game, EVENT.key.keysym.sym);
-		if (EVENT.type == SDL_KEYUP)
-			keyup(game, EVENT.key.keysym.sym);
 	}
 }

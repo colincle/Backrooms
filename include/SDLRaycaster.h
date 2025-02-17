@@ -14,15 +14,15 @@
 //==============================MACROS
 // SETTINGS
 # define FOV			53
-# define FPS_CAP		60
+# define FPS_CAP		100
 # define PLAYER_SPEED	3
-# define ROTATION_SPEED	1
+# define MOUSE_SENSITIVITY	0.02
 
 // DEBUG
 # define PRINT_ENTITIES FALSE
 # define PRINT_MAPS 	FALSE
 # define SHOW_MINIMAP 	TRUE
-# define SHOW_PATH_FIND TRUE
+# define SHOW_PATH_FIND FALSE
 # define SHOW_FPS		TRUE
 # define SHOW_DIRECTION	FALSE
 # define SHOW_POSITION	FALSE
@@ -176,6 +176,7 @@ void					init_vector_grid(t_game *game);
 void					debug_statements(t_game *game);
 void					render_next_frame(t_game *game);
 void					update_vector_grid(t_game *game);
+void					rotate_player(t_game *game, int x);
 void					set_player_cam(t_game *game, int i);
 void					set_player_cam(t_game *game, int i);
 void					init_raycaster_steps(t_raycaster *r);
