@@ -155,12 +155,14 @@ typedef struct s_game
 	t_entity			**player;
 	t_entity			***enemy;
 	t_textures			textures;
+	t_raycaster			raycaster;
 	SDL_Renderer		*renderer;
 	int					wind_width;
 	int					wind_height;
 	t_float_xy			***vector_grid;
 }						t_game;
 
+# define RAY			game->raycaster
 # define FPS			game->fps
 # define MAPS			game->maps
 # define LEVEL			game->level
@@ -208,7 +210,7 @@ void					update_vector_grid(t_game *game);
 void					rotate_player(t_game *game, int x);
 void					set_player_cam(t_game *game, int i);
 void					set_player_cam(t_game *game, int i);
-void					init_raycaster_steps(t_raycaster *r);
+void					init_raycaster_steps(t_game *game);
 void					chapter_1(t_game *game, int *running);
 void					chapter_2(t_game *game, int *running);
 void					chapter_3(t_game *game, int *running);
@@ -216,8 +218,8 @@ void					chapter_4(t_game *game, int *running);
 void					chapter_5(t_game *game, int *running);
 char					*strjoin(const char *s1, const char *s2);
 void					handle_events(t_game *game, int *running);
-void					init_raycaster(t_raycaster *r, t_game *game);
-void					perform_raycaster_steps(t_raycaster *r, t_game *game);
+void					init_raycaster(t_game *game);
+void					perform_raycaster_steps(t_game *game);
 void					draw_cercle(SDL_Renderer *renderer, int centerX, int centerY, int radius);
 void					draw_column(SDL_Renderer *renderer, int x, int yStart, int yEnd, SDL_Color color);
 

@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-static void	proto_3d_render(t_game *game, t_raycaster *r)
+static void	proto_3d_render(t_game *game)
 {
 	int line_height, start, end;
 	int tex_x, tex_w, tex_h;
@@ -13,7 +13,7 @@ static void	proto_3d_render(t_game *game, t_raycaster *r)
 	SDL_Rect src, dest;
 
 	// Correct perpendicular distance for projection
-	line_height = game->wind_height / r->perp_wall_dist;
+	line_height = game->wind_height / RAY.perp_wall_dist;
 	start = (game->wind_height - line_height) / 2;
 	end = start + line_height;
 
@@ -21,10 +21,10 @@ static void	proto_3d_render(t_game *game, t_raycaster *r)
 	SDL_QueryTexture(game->textures.wall.texture, NULL, NULL, &tex_w, &tex_h);
 
 	// Determine exact wall hit position for texture mapping
-	if (r->side == 0)
-		wall_x = r->pos_y + r->perp_wall_dist * r->ray_dir_y;
+	if (RAY.side == 0)
+		wall_x = RAY.pos_y + RAY.perp_wall_dist * RAY.ray_dir_y;
 	else
-		wall_x = r->pos_x + r->perp_wall_dist * r->ray_dir_x;
+		wall_x = RAY.pos_x + RAY.perp_wall_dist * RAY.ray_dir_x;
 	wall_x -= floor(wall_x); // Get the fractional part (0-1) for texture mapping
 
 	// Calculate the corresponding texture X coordinate
@@ -33,7 +33,7 @@ static void	proto_3d_render(t_game *game, t_raycaster *r)
 	if (tex_x >= tex_w) tex_x = tex_w - 1;
 
 	// Render ceiling
-	draw_column(RENDERER, r->x, 0, start, int_to_color(0x808080FF));
+	draw_column(RENDERER, RAY.x, 0, start, int_to_color(0x808080FF));
 
 	// Set texture source (scaled strip)
 	src.x = tex_x;
@@ -42,7 +42,7 @@ static void	proto_3d_render(t_game *game, t_raycaster *r)
 	src.h = tex_h;
 
 	// Set destination rectangle (scaled to fit wall height)
-	dest.x = r->x;
+	dest.x = RAY.x;
 	dest.y = start;
 	dest.w = 1;
 	dest.h = line_height;
@@ -51,7 +51,7 @@ static void	proto_3d_render(t_game *game, t_raycaster *r)
 	SDL_RenderCopyEx(RENDERER, game->textures.wall.texture, &src, &dest, 0, NULL, SDL_FLIP_NONE);
 
 	// Render floor
-	draw_column(RENDERER, r->x, end, game->wind_height, int_to_color(0x808080FF));
+	draw_column(RENDERER, RAY.x, end, game->wind_height, int_to_color(0x808080FF));
 }
 
 
@@ -59,24 +59,15 @@ static void	proto_3d_render(t_game *game, t_raycaster *r)
 
 static void	draw_scene(t_game *game)
 {
-	t_raycaster	*r;
-
-	r = malloc(sizeof(t_raycaster));
-	if (!r)
+	RAY.x = 0;
+	while (RAY.x < WIND_WIDTH)
 	{
-		fprintf(stderr, "ERROR: memory allocation failed in draw_scene");
-		exit(EXIT_FAILURE);
+		init_raycaster(game);
+		init_raycaster_steps(game);
+		perform_raycaster_steps(game);
+		proto_3d_render(game);
+		RAY.x++;
 	}
-	r->x = 0;
-	while (r->x < WIND_WIDTH)
-	{
-		init_raycaster(r, game);
-		init_raycaster_steps(r);
-		perform_raycaster_steps(r, game);
-		proto_3d_render(game, r);
-		r->x++;
-	}
-	free(r);
 }
 
 void	render_next_frame(t_game *game)
