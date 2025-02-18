@@ -85,6 +85,7 @@ t_game	*game_init(void)
 		fprintf(stderr, "ERROR: memory allocation failed in game_init");
 		exit(EXIT_FAILURE);
 	}
+	load_textures(game);
 	controller_init(game);
 	graphics_init(game);
 	game_struct_init(game);
