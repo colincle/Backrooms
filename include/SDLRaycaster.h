@@ -15,18 +15,18 @@
 // SETTINGS
 # define FOV			53
 # define FPS_CAP		60
-# define PLAYER_SPEED	3
+# define DEFAULT_SPEED	2
 # define MOUSE_SENSIT	0.01
 # define JOY_SENSIT		2
-# define PIXEL_BLOCK	5
+# define PIXEL_BLOCK	1
 # define VSYNC			TRUE
 
 // DEBUG
 # define PRINT_ENTITIES FALSE
 # define PRINT_MAPS 	FALSE
-# define SHOW_MINIMAP 	TRUE
+# define SHOW_MINIMAP 	FALSE
 # define SHOW_PATH_FIND FALSE
-# define SHOW_FPS		TRUE
+# define SHOW_FPS		FALSE
 # define SHOW_DIRECTION	FALSE
 # define SHOW_POSITION	FALSE
 # define SHOW_CAM_PLANE	FALSE
@@ -54,7 +54,8 @@
 # define A				1
 # define S				2
 # define D				3
-# define HOW_MANY_KEYS	4
+# define SHIFT			4
+# define HOW_MANY_KEYS	5
 
 // OTHERS
 # define TRUE			1
@@ -169,6 +170,7 @@ typedef struct s_game
 	char				***maps;
 	t_entity			**player;
 	t_entity			***enemy;
+	int					speed;
 	t_textures			textures;
 	SDL_Renderer		*renderer;
 	int					wind_width;
@@ -187,6 +189,7 @@ typedef struct s_game
 # define KEYS			game->input.keys
 # define WIND_WIDTH		game->wind_width
 # define WIND_HEIGHT	game->wind_height
+# define PLAYER_SPEED	game->speed
 # define VECTOR_GRID	game->vector_grid
 # define MOUSE_X		game->input.mouse_x_rel
 # define PLAYER_X		game->player[(LEVEL)]->x

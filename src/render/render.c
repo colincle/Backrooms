@@ -53,91 +53,104 @@ static inline void proto_3d_render(t_game *game, t_raycaster *r)
 
 void cast_floor(t_game *game)
 {
-    Uint32 *pixels;
-    int pitch;
+	Uint32 *pixels;
+	int pitch;
 
-    if (!game->textures.screen_texture)
-    {
-        printf("Error: screen_texture is NULL\n");
-        return;
-    }
+	if (!game->textures.screen_texture)
+	{
+		printf("Error: screen_texture is NULL\n");
+		return;
+	}
 
-    if (SDL_LockTexture(game->textures.screen_texture, NULL, (void **)&pixels, &pitch) != 0)
-    {
-        printf("SDL_LockTexture failed: %s\n", SDL_GetError());
-        return;
-    }
+	if (SDL_LockTexture(game->textures.screen_texture, NULL, (void **)&pixels, &pitch) != 0)
+	{
+		printf("SDL_LockTexture failed: %s\n", SDL_GetError());
+		return;
+	}
 
-    pitch /= sizeof(Uint32);
+	pitch /= sizeof(Uint32);
 
-    // **Precompute constants (done once per frame)**
-    float ray_dir_x_0 = PLAYER_DIR_X - PLAYER_CAM_X;
-    float ray_dir_y_0 = PLAYER_DIR_Y - PLAYER_CAM_Y;
-    float ray_dir_x_1 = PLAYER_DIR_X + PLAYER_CAM_X;
-    float ray_dir_y_1 = PLAYER_DIR_Y + PLAYER_CAM_Y;
-    float pos_z = 0.5 * WIND_HEIGHT;
+	// **Precompute constants (done once per frame)**
+	float ray_dir_x_0 = PLAYER_DIR_X - PLAYER_CAM_X;
+	float ray_dir_y_0 = PLAYER_DIR_Y - PLAYER_CAM_Y;
+	float ray_dir_x_1 = PLAYER_DIR_X + PLAYER_CAM_X;
+	float ray_dir_y_1 = PLAYER_DIR_Y + PLAYER_CAM_Y;
+	float pos_z = 0.5 * WIND_HEIGHT;
 
-    for (int y = WIND_HEIGHT / 2 + 1; y < WIND_HEIGHT; ++y)
-    {
-        int p = y - WIND_HEIGHT / 2;
-		float row_distance = (pos_z / p) * 2; // Scale to match smaller world blocks
+	// **Process floor in steps of PIXEL_BLOCK**
+	for (int y = WIND_HEIGHT / 2 + 1; y < WIND_HEIGHT; y += PIXEL_BLOCK)
+	{
+		int p = y - WIND_HEIGHT / 2;
+		float row_distance = (pos_z / p) * 2;
 
-        float step_x = row_distance * (ray_dir_x_1 - ray_dir_x_0) / WIND_WIDTH;
-        float step_y = row_distance * (ray_dir_y_1 - ray_dir_y_0) / WIND_WIDTH;
+		float step_x = row_distance * (ray_dir_x_1 - ray_dir_x_0) / WIND_WIDTH;
+		float step_y = row_distance * (ray_dir_y_1 - ray_dir_y_0) / WIND_WIDTH;
 
-        float floor_x = PLAYER_X + row_distance * ray_dir_x_0;
-        float floor_y = PLAYER_Y + row_distance * ray_dir_y_0;
-        float ceiling_x = floor_x;
-        float ceiling_y = floor_y;
+		float floor_x = PLAYER_X + row_distance * ray_dir_x_0;
+		float floor_y = PLAYER_Y + row_distance * ray_dir_y_0;
+		float ceiling_x = floor_x;
+		float ceiling_y = floor_y;
 
-        for (int x = 0; x < WIND_WIDTH; ++x)
-        {
-            // **Floor texture lookup**
-            int cell_x = (int)floor_x;
-            int cell_y = (int)floor_y;
-            int floor_tx = (int)(game->textures.floor.width * (floor_x - cell_x)) & (game->textures.floor.width - 1);
-            int floor_ty = (int)(game->textures.floor.height * (floor_y - cell_y)) & (game->textures.floor.height - 1);
+		for (int x = 0; x < WIND_WIDTH; x += PIXEL_BLOCK)
+		{
+			// **Floor texture lookup**
+			int cell_x = (int)floor_x;
+			int cell_y = (int)floor_y;
+			int floor_tx = (int)(game->textures.floor.width * (floor_x - cell_x)) & (game->textures.floor.width - 1);
+			int floor_ty = (int)(game->textures.floor.height * (floor_y - cell_y)) & (game->textures.floor.height - 1);
 
-            // **Ceiling texture lookup**
-            int ceil_cell_x = (int)ceiling_x;
-            int ceil_cell_y = (int)ceiling_y;
-            int ceiling_tx = (int)(game->textures.ceiling.width * (ceiling_x - ceil_cell_x)) & (game->textures.ceiling.width - 1);
-            int ceiling_ty = (int)(game->textures.ceiling.height * (ceiling_y - ceil_cell_y)) & (game->textures.ceiling.height - 1);
+			// **Ceiling texture lookup**
+			int ceil_cell_x = (int)ceiling_x;
+			int ceil_cell_y = (int)ceiling_y;
+			int ceiling_tx = (int)(game->textures.ceiling.width * (ceiling_x - ceil_cell_x)) & (game->textures.ceiling.width - 1);
+			int ceiling_ty = (int)(game->textures.ceiling.height * (ceiling_y - ceil_cell_y)) & (game->textures.ceiling.height - 1);
 
-            // **Move forward in the world**
-            floor_x += step_x;
-            floor_y += step_y;
-            ceiling_x += step_x;
-            ceiling_y += step_y;
+			// **Move forward in the world**
+			floor_x += step_x * PIXEL_BLOCK;
+			floor_y += step_y * PIXEL_BLOCK;
+			ceiling_x += step_x * PIXEL_BLOCK;
+			ceiling_y += step_y * PIXEL_BLOCK;
 
-            // **Correct texture pointers**
-            Uint32 *floor_pixels = game->textures.floor.pixels;
-            Uint32 *ceiling_pixels = game->textures.ceiling.pixels;
+			// **Correct texture pointers**
+			Uint32 *floor_pixels = game->textures.floor.pixels;
+			Uint32 *ceiling_pixels = game->textures.ceiling.pixels;
 
-            if (!floor_pixels || !ceiling_pixels)
-            {
-                printf("Error: floor or ceiling pixels are NULL\n");
-                SDL_UnlockTexture(game->textures.screen_texture);
-                return;
-            }
+			if (!floor_pixels || !ceiling_pixels)
+			{
+				printf("Error: floor or ceiling pixels are NULL\n");
+				SDL_UnlockTexture(game->textures.screen_texture);
+				return;
+			}
 
-            // **Fetch correct pixels**
-            Uint32 floor_color = floor_pixels[game->textures.floor.width * floor_ty + floor_tx];
-            Uint32 ceiling_color = ceiling_pixels[game->textures.ceiling.width * ceiling_ty + ceiling_tx];
+			// **Fetch correct pixels**
+			Uint32 floor_color = floor_pixels[game->textures.floor.width * floor_ty + floor_tx];
+			Uint32 ceiling_color = ceiling_pixels[game->textures.ceiling.width * ceiling_ty + ceiling_tx];
 
-            // **Darken for lighting effect**
-            floor_color = (floor_color >> 1) & 8355711;
-            ceiling_color = (ceiling_color >> 1) & 8355711;
+			// **Darken for lighting effect**
+			floor_color = (floor_color >> 1) & 8355711;
+			ceiling_color = (ceiling_color >> 1) & 8355711;
 
-            // **IMPORTANT: Write ceiling first, THEN floor**
-            pixels[(WIND_HEIGHT - y - 1) * pitch + x] = ceiling_color; // Ceiling FIRST
-            pixels[y * pitch + x] = floor_color;  // Floor SECOND
-        }
-    }
+			// **Fill PIXEL_BLOCK × PIXEL_BLOCK pixels**
+			for (int dy = 0; dy < PIXEL_BLOCK; dy++)
+			{
+				for (int dx = 0; dx < PIXEL_BLOCK; dx++)
+				{
+					int px = x + dx;
+					int py = y + dy;
+					if (px < WIND_WIDTH && py < WIND_HEIGHT)
+					{
+						pixels[(WIND_HEIGHT - py - 1) * pitch + px] = ceiling_color; // Ceiling FIRST
+						pixels[py * pitch + px] = floor_color;  // Floor SECOND
+					}
+				}
+			}
+		}
+	}
 
-    SDL_UnlockTexture(game->textures.screen_texture);
-    SDL_RenderCopy(game->renderer, game->textures.screen_texture, NULL, NULL);
+	SDL_UnlockTexture(game->textures.screen_texture);
+	SDL_RenderCopy(game->renderer, game->textures.screen_texture, NULL, NULL);
 }
+
 
 
 

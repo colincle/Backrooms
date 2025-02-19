@@ -15,6 +15,11 @@ static void	keydown(t_game *game, SDL_KeyCode code)
 		KEYS[S] = TRUE;
 	if (code == SDLK_d)
 		KEYS[D] = TRUE;
+	if (code == SDLK_LSHIFT)
+	{
+		KEYS[SHIFT] = TRUE;
+		PLAYER_SPEED = DEFAULT_SPEED + 2;
+	}
 }
 
 static void	keyup(t_game *game, SDL_KeyCode code)
@@ -27,12 +32,18 @@ static void	keyup(t_game *game, SDL_KeyCode code)
 		KEYS[S] = FALSE;
 	if (code == SDLK_d)
 		KEYS[D] = FALSE;
+	if (code == SDLK_LSHIFT)
+	{
+		KEYS[SHIFT] = FALSE;
+		PLAYER_SPEED = DEFAULT_SPEED;
+	}
 }
 
 void	handle_events(t_game *game, int *running)
 {
 	while (SDL_PollEvent(&EVENT))
 	{
+		printf("%d%c------------------------%c",EVENT.type, 10, 10); fflush(stdout); //debug
 		if (EVENT.type == SDL_MOUSEMOTION)
 		{
 			MOUSE_X = EVENT.motion.xrel;
@@ -48,6 +59,7 @@ void	handle_events(t_game *game, int *running)
 		}
 		if (EVENT.type == SDL_KEYDOWN)
 		{
+			printf("%d%c------------------------%c", EVENT.key.keysym.sym, 10, 10); fflush(stdout); //debug
 			keydown(game, EVENT.key.keysym.sym);
 		}
 		if (EVENT.type == SDL_KEYUP)
@@ -57,6 +69,12 @@ void	handle_events(t_game *game, int *running)
 		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_ESCAPE)
 		{
 			*running = 0;
+		}
+		if (EVENT.type == SDL_CONTROLLERBUTTONDOWN && EVENT.cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSTICK)
+		{
+			if (PLAYER_SPEED == DEFAULT_SPEED)
+				PLAYER_SPEED = DEFAULT_SPEED + 2;
+			else PLAYER_SPEED = DEFAULT_SPEED;
 		}
 		if (EVENT.type == SDL_QUIT)
 		{

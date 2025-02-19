@@ -18,6 +18,7 @@ static void	game_struct_init(t_game *game)
 		fprintf(stderr, "ERROR: memory allocation failed in game_struct_init");
 		exit(EXIT_FAILURE);
 	}
+	PLAYER_SPEED = DEFAULT_SPEED;
 }
 
 static void	graphics_init(t_game *game)
