@@ -77,7 +77,6 @@ static void	game_loop(t_game *game)
 		render_next_frame(game);
 		debug_statements(game);
 		manage_fps(game);
-		printf("%d%c------------------------%c", MOVING, 10, 10); fflush(stdout); //debug
 	}
 }
 

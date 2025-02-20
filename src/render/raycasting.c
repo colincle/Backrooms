@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-static void	ray_has_hit_wall(t_raycaster *r)
+void	ray_has_hit_wall(t_raycaster *r)
 {
 	double	inv_ray_dir_x;
 	double	inv_ray_dir_y;
@@ -22,28 +22,25 @@ static void	ray_has_hit_wall(t_raycaster *r)
 	r->wall_hit_y = r->pos_y + r->ray_dir_y * perp_dist;
 }
 
-void	store_mini_ray(t_mini_ray_node **head, t_raycaster *r, char **map)
+void	store_mini_ray(t_mini_ray_node **head, t_raycaster r, char **map)
 {
 	t_mini_ray_node *new_node;
 
-	if (map[r->map_y][r->map_x] >= '0' && map[r->map_y][r->map_x] <= '9')
+	if (map[r.map_y][r.map_x] >= '0' && map[r.map_y][r.map_x] <= '9')
 	{
-		ray_has_hit_wall(r);
+		ray_has_hit_wall(&r);
 		new_node = malloc(sizeof(t_mini_ray_node));
 		if (!new_node)
 			exit(1);
-		new_node->ray.detetcted = map[r->map_y][r->map_x] - '0';
-		new_node->ray.perp_wall_dist = r->perp_wall_dist;
-		new_node->ray.pos_x = r->pos_x;
-		new_node->ray.pos_y = r->pos_y;
-		new_node->ray.ray_dir_x = r->ray_dir_x;
-		new_node->ray.ray_dir_y = r->ray_dir_y;
-		new_node->ray.side = r->side;
-		new_node->ray.x = r->x;
+
+		new_node->ray = r;  // Copy entire struct
+		new_node->ray.detected = map[r.map_y][r.map_x] - '0';
 		new_node->next = *head; // Insert at the beginning
 		*head = new_node;
 	}
 }
+
+
 
 
 void	perform_raycaster_steps(t_raycaster *r, t_game *game)
@@ -61,7 +58,7 @@ void	perform_raycaster_steps(t_raycaster *r, t_game *game)
 		// 		return ;
 		// 	}
 		// }
-		store_mini_ray(&r->mini_ray, r, MAPS[LEVEL]);
+		store_mini_ray(&r->mini_ray, *r, MAPS[LEVEL]);
 		if (r->side_dist_x < r->side_dist_y)
 		{
 			r->side_dist_x += r->delta_dist_x;

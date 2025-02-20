@@ -11,10 +11,6 @@
 # include <stdio.h>
 # include <fcntl.h>
 
-#define MAP_HEIGHT 23
-#define MAP_WIDTH 50
-
-
 //==============================MACROS
 // SETTINGS
 # define FOV			53
@@ -95,8 +91,8 @@
 //==============================STRUCTS
 typedef struct s_point
 {
-	int	x;
-	int	y;
+	int					x;
+	int					y;
 }	t_point;
 
 typedef struct s_float_xy
@@ -133,27 +129,13 @@ typedef struct s_sounds
 	Mix_Chunk			*walking;
 }						t_sounds;
 
-typedef struct s_mini_ray
-{
-	int					detetcted;
-	int					x;
-	int					side;
-	float				pos_x;
-	float				pos_y;
-	float				ray_dir_x;
-	float				ray_dir_y;
-	float				perp_wall_dist;
-}						t_mini_ray;
 
-typedef struct s_mini_ray_node
-{
-	t_mini_ray			ray;
-	struct s_mini_ray_node *next;
-}						t_mini_ray_node;
 
+struct s_mini_ray_node; // Forward declaration
 
 typedef struct s_raycaster
 {
+	int					detected;
 	int					x;
 	int					side;
 	float				pos_x;
@@ -174,8 +156,14 @@ typedef struct s_raycaster
 	float				delta_dist_x;
 	float				delta_dist_y;
 	float				perp_wall_dist;
-	t_mini_ray_node		*mini_ray;
+	struct s_mini_ray_node		*mini_ray; // Use the forward-declared struct
 }						t_raycaster;
+
+typedef struct s_mini_ray_node
+{
+	t_raycaster		ray;  // Store full raycaster struct instead of a stripped version
+	struct s_mini_ray_node *next;
+}	t_mini_ray_node;
 
 
 typedef struct s_input
@@ -284,6 +272,7 @@ void					init_raycaster_steps(t_raycaster *r);
 void					chapter_1(t_game *game, int *running);
 void					chapter_2(t_game *game, int *running);
 void					chapter_3(t_game *game, int *running);
+void					ray_has_hit_wall(t_raycaster *r);
 void					keydown(t_game *game, SDL_KeyCode code);
 void					keyup(t_game *game, SDL_KeyCode code);
 void					chapter_4(t_game *game, int *running);

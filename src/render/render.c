@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-static void	half_down_block(t_game *game, t_mini_ray *r)
+static void	half_down_block(t_game *game, t_raycaster *r)
 {
 	int			tex_x;
 	int			start;
@@ -30,7 +30,7 @@ static void	half_down_block(t_game *game, t_mini_ray *r)
 	start = ((wind_height - line_height) >> 1) + CAM_SHIFT;
 
 	// Fix scaling to have a proper min size & max cap
-	double normalized = (r->detetcted - 5) / 4.0; // Range: 0 (min) to 1 (max)
+	double normalized = (r->detected - 5) / 4.0; // Range: 0 (min) to 1 (max)
 	block_height = line_height * (0.1 + (normalized * 0.8)); // Min 10%, Max 90%
 
 	wall_x = (r->side == 0)
@@ -58,44 +58,68 @@ static void	half_down_block(t_game *game, t_mini_ray *r)
 
 	// Reset texture brightness for next frame
 	SDL_SetTextureColorMod(game->textures.wall.texture, 255, 255, 255);
-	r->detetcted = -1;
+	r->detected = -1;
 }
 
-static void	half_up_block(t_game *game, t_mini_ray *r)
+static t_point find_floor_end(t_game *game, t_raycaster *r)
 {
-	int			tex_x;
-	int			start;
-	int			block_height;
-	double		wall_x;
-	SDL_Rect	dest;
-	SDL_Rect	src;
-	int			wind_height;
-	int			tex_w;
-	int			tex_h;
-	double		inv_perp_wall_dist;
-	SDL_Texture	*wall_texture;
+	int start, block_height;
+	double inv_perp_wall_dist;
+	int line_height;
 
-	SDL_SetTextureColorMod(game->textures.wall.texture, 255, 255, 255); // Reset brightness
+	// **1️⃣ Take ONE DDA step inside the block**
+	if (r->side_dist_x < r->side_dist_y)
+	{
+		r->side_dist_x += r->delta_dist_x;
+		r->map_x += r->step_x;
+		r->side = 0;
+	}
+	else
+	{
+		r->side_dist_y += r->delta_dist_y;
+		r->map_y += r->step_y;
+		r->side = 1;
+	}
+	ray_has_hit_wall(r);
 
-	wind_height = WIND_HEIGHT;
-	tex_w = game->textures.wall.width;
-	tex_h = game->textures.wall.height;
+	// **2️⃣ Compute perpendicular wall distance**
 	inv_perp_wall_dist = 1.0 / (r->perp_wall_dist / 2);
-	int line_height = (int)(wind_height * inv_perp_wall_dist); // Keep base height
+	line_height = (int)(WIND_HEIGHT * inv_perp_wall_dist);
+
+	start = ((WIND_HEIGHT - line_height) >> 1) + CAM_SHIFT;
+
+	// **3️⃣ Scale height correctly for the far side of the block**
+	double normalized = r->detected / 4.0;  // Range: 0 (min) to 1 (max)
+	block_height = line_height * (0.1 + (normalized * 0.8)); // Min 10%, Max 90%
+
+	int inside_wall_y = start + (line_height - block_height);
+
+	return ((t_point){r->x, inside_wall_y});
+}
+
+static t_point draw_half_block_up(t_game *game, t_raycaster *r)
+{
+	int tex_x, start, block_height;
+	double wall_x;
+	SDL_Rect dest, src;
+	int wind_height = WIND_HEIGHT;
+	int tex_w = game->textures.wall.width;
+	int tex_h = game->textures.wall.height;
+	double inv_perp_wall_dist = 1.0 / (r->perp_wall_dist / 2);
+	int line_height = (int)(wind_height * inv_perp_wall_dist);
 
 	start = ((wind_height - line_height) >> 1) + CAM_SHIFT;
 
 	// Fix scaling for proper min/max heights
-	double normalized = r->detetcted / 4.0; // Range: 0 (min) to 1 (max)
+	double normalized = r->detected / 4.0; // Range: 0 (min) to 1 (max)
 	block_height = line_height * (0.1 + (normalized * 0.8)); // Min 10%, Max 90%
 
-	// Move the wall upwards by its height to stick it to the floor
+	// Adjust wall position to stick to the floor
 	wall_x = (r->side == 0)
 		? (r->pos_y + r->perp_wall_dist * r->ray_dir_y)
 		: (r->pos_x + r->perp_wall_dist * r->ray_dir_x);
 	wall_x -= (int)wall_x;
-	tex_x = (int)(wall_x * tex_w);
-	tex_x &= (tex_w - 1);
+	tex_x = (int)(wall_x * tex_w) & (tex_w - 1);
 
 	// Darken walls that face north/south (side 1)
 	if (r->side == 1)
@@ -106,19 +130,68 @@ static void	half_up_block(t_game *game, t_mini_ray *r)
 	src.w = 1;
 	src.h = tex_h;
 	dest.x = r->x;
-	dest.y = start + (line_height - block_height); // Stick it on the floor
-	dest.h = block_height; // Proportional height scaling
+	dest.y = start + (line_height - block_height);
+	dest.h = block_height;
 	dest.w = PIXEL_BLOCK;
 
-	// Render the wall
+	// Render the half block wall
 	SDL_RenderCopy(RENDERER, game->textures.wall.texture, &src, &dest);
 
-	// Reset texture brightness for next frame
+	// Reset texture brightness
 	SDL_SetTextureColorMod(game->textures.wall.texture, 255, 255, 255);
-	r->detetcted = -1;
+	return ((t_point){dest.x, dest.y});
 }
 
+static void draw_half_block_floor(t_point start, t_point end, t_game *game, t_raycaster *r)
+{
+	if (start.y < end.y)
+		return; // Floor is not visible, skip rendering
 
+	// Get texture dimensions
+	int tex_w = game->textures.floor.width;
+	int tex_h = game->textures.floor.height;
+	Uint32 *floor_pixels = game->textures.floor.pixels;
+
+	// Compute world-space coordinates of the block surface
+	double floorXWall = r->map_x + 0.5;
+	double floorYWall = r->map_y + 0.5;
+
+	// Compute distance to floor surface
+	double distWall = r->perp_wall_dist;
+	double currentDist, weight, currentFloorX, currentFloorY;
+
+	for (int y = start.y; y >= end.y; y--)
+	{
+		currentDist = (double)WIND_HEIGHT / (2.0 * (y - WIND_HEIGHT / 2));
+		weight = currentDist / distWall;
+
+		currentFloorX = weight * (floorXWall - r->pos_x) + r->pos_x;
+		currentFloorY = weight * (floorYWall - r->pos_y) + r->pos_y;
+
+		int floorTexX = ((int)(currentFloorX * tex_w)) & (tex_w - 1);
+		int floorTexY = ((int)(currentFloorY * tex_h)) & (tex_h - 1);
+
+		if (floorTexX < 0 || floorTexX >= tex_w || floorTexY < 0 || floorTexY >= tex_h)
+			continue;
+
+		Uint32 floor_color = floor_pixels[tex_w * floorTexY + floorTexX];
+		floor_color = (floor_color >> 1) & 8355711;
+
+		SDL_SetRenderDrawColor(game->renderer,
+			(floor_color >> 16) & 0xFF,
+			(floor_color >> 8) & 0xFF,
+			floor_color & 0xFF,
+			255);
+		SDL_RenderDrawPoint(game->renderer, start.x, y);
+	}
+}
+
+static void render_half_block_wall(t_game *game, t_raycaster *r)
+{
+	t_point start = draw_half_block_up(game, r);
+	t_point end = find_floor_end(game, r);
+	draw_half_block_floor(start, end, game, r);
+}
 
 static void	proto_3d_render(t_game *game, t_raycaster *r)
 {
@@ -315,8 +388,8 @@ void	render_mini_rays(t_game *game, t_mini_ray_node **head)
 
 	while (current)
 	{
-		if (current->ray.detetcted < 5)
-			half_up_block(game, &current->ray);
+		if (current->ray.detected < 5)
+			render_half_block_wall(game, &current->ray);
 		else
 			half_down_block(game, &current->ray);
 
