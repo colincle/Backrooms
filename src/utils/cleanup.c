@@ -90,24 +90,30 @@ static void	free_vector_grid(t_game *game)
 	game->vector_grid = NULL;
 }
 
-void	cleanup_textures(t_textures *textures)
+void	cleanup_textures(t_game *game)
 {
-	if (textures->wall.texture)
+	if (game->textures.wall.texture)
 	{
-		SDL_DestroyTexture(textures->wall.texture);
-		textures->wall.texture = NULL;
+		SDL_DestroyTexture(game->textures.wall.texture);
+		game->textures.wall.texture = NULL;
 	}
-	if (textures->ceiling.texture)
+	if (game->textures.ceiling.texture)
 	{
-		SDL_DestroyTexture(textures->ceiling.texture);
-		textures->ceiling.texture = NULL;
+		SDL_DestroyTexture(game->textures.ceiling.texture);
+		game->textures.ceiling.texture = NULL;
 	}
-	if (textures->floor.texture)
+	if (game->textures.floor.texture)
 	{
-		SDL_DestroyTexture(textures->floor.texture);
-		textures->floor.texture = NULL;
+		SDL_DestroyTexture(game->textures.floor.texture);
+		game->textures.floor.texture = NULL;
+	}
+	if (game->textures.screen_texture)
+	{
+		SDL_DestroyTexture(game->textures.screen_texture);
+		game->textures.screen_texture = NULL;
 	}
 }
+
 
 void	cleanup_sounds(t_game *game)
 {
@@ -123,7 +129,7 @@ void	cleanup_sounds(t_game *game)
 void	cleanup(t_game *game)
 {
 	cleanup_sounds(game);
-	cleanup_textures(&game->textures);
+	cleanup_textures(game);
 	free_all_maps(game);
 	free_entities(game);
 	free_vector_grid(game);

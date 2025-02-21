@@ -5,10 +5,33 @@
 
 #include <SDLRaycaster.h>
 
+#include <stdio.h>
+#include <sys/time.h>
+
 void	debug_statements(t_game *game)
 {
-	if (SHOW_FPS)
-		printf("FPS = %f\n", FPS);
+	static struct timeval	last_time = {0, 0};
+	static double			fps_sum = 0;
+	static int				fps_count = 0;
+	struct timeval			current_time;
+	double					elapsed_time;
+
+	gettimeofday(&current_time, NULL);
+	elapsed_time = (current_time.tv_sec - last_time.tv_sec) +
+					(current_time.tv_usec - last_time.tv_usec) / 1000000.0;
+	
+	fps_sum += FPS;
+	fps_count++;
+
+	if (elapsed_time >= 0.5)
+	{
+		if (SHOW_FPS)
+			printf("Avg FPS (0.5s) = %f\n", fps_sum / fps_count);
+		last_time = current_time;
+		fps_sum = 0;
+		fps_count = 0;
+	}
+
 	if (SHOW_DIRECTION)
 		printf("dir x = %f dir y = %f\n", PLAYER_DIR_X, PLAYER_DIR_Y);
 	if (SHOW_POSITION)
@@ -16,6 +39,7 @@ void	debug_statements(t_game *game)
 	if (SHOW_CAM_PLANE)
 		printf("camera plane x = %f camera plane y = %f\n", PLAYER_CAM_X, PLAYER_CAM_Y);
 }
+
 
 void	print_entities(t_game *game)
 {

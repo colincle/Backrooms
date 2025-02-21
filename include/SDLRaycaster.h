@@ -11,6 +11,9 @@
 # include <stdio.h>
 # include <fcntl.h>
 
+#define MAP_WIDTH 50
+#define MAP_HEIGHT 25
+
 //==============================MACROS
 // SETTINGS
 # define FOV			53
@@ -27,7 +30,7 @@
 # define PRINT_MAPS 	FALSE
 # define SHOW_MINIMAP 	FALSE
 # define SHOW_PATH_FIND FALSE
-# define SHOW_FPS		FALSE
+# define SHOW_FPS		TRUE
 # define SHOW_DIRECTION	FALSE
 # define SHOW_POSITION	FALSE
 # define SHOW_CAM_PLANE	FALSE
@@ -129,7 +132,18 @@ typedef struct s_sounds
 	Mix_Chunk			*walking;
 }						t_sounds;
 
-
+typedef struct s_floor_ceiling
+{
+	Uint32				*pixels;
+	int					pitch;
+	Uint32				*floor_pixels;
+	Uint32				*ceiling_pixels;
+	float				ray_dir_x_0;
+	float				ray_dir_y_0;
+	float				ray_dir_x_1;
+	float				ray_dir_y_1;
+	int					horizon;
+}						t_floor_ceiling;
 
 struct s_mini_ray_node; // Forward declaration
 
