@@ -131,6 +131,7 @@ void	cleanup(t_game *game)
 	cleanup_sounds(game);
 	cleanup_textures(game);
 	free_all_maps(game);
+	free(game->z_buffer);
 	free_entities(game);
 	free_vector_grid(game);
 	free(game);

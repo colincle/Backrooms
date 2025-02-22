@@ -21,7 +21,6 @@
 # define DEFAULT_SPEED	2
 # define MOUSE_SENSIT	0.01
 # define JOY_SENSIT		2
-# define PIXEL_BLOCK	1
 # define VSYNC			TRUE
 
 // DEBUG
@@ -44,12 +43,14 @@
 # define WALL_2			'2'
 # define WALL_3			'3'
 # define WALL_4			'4'
+# define IS_HALF_BLOCK_UP(c) ((c) == WALL_0 || (c) == WALL_1 || (c) == WALL_2 || (c) == WALL_3 || (c) == WALL_4)
 // Sticking out of the ceiling
 # define WALL_5			'5'
 # define WALL_6			'6'
 # define WALL_7			'7'
 # define WALL_8			'8'
 # define WALL_9			'9'
+# define IS_HALF_BLOCK_DOWN(c) ((c) == WALL_5 || (c) == WALL_6 || (c) == WALL_7 || (c) == WALL_8 || (c) == WALL_9)
 # define VOID			'.'
 # define EMPTY			' '
 # define P_NORTH		'N'
@@ -223,6 +224,7 @@ typedef struct s_game
 	SDL_Renderer		*renderer;
 	int					wind_width;
 	int					wind_height;
+	float				*z_buffer;
 	t_float_xy			***vector_grid;
 	t_sounds			sounds;
 	int					camera_shift;

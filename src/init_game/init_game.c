@@ -12,11 +12,14 @@ static void	game_struct_init(t_game *game)
 	init_vector_grid(game);
 	init_entities(game);
 	print_entities(game);
+	game->z_buffer = calloc(WIND_HEIGHT * WIND_WIDTH, sizeof(float));
+	if (!game->z_buffer)
+		cleanup(game);
 	KEYS = malloc(sizeof(int) * HOW_MANY_KEYS);
 	if (!KEYS)
 	{
 		fprintf(stderr, "ERROR: memory allocation failed in game_struct_init");
-		exit(EXIT_FAILURE);
+		cleanup(game);
 	}
 	PLAYER_SPEED = DEFAULT_SPEED;
 	CAM_SHIFT = 0;
