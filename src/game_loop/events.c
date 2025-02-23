@@ -33,9 +33,29 @@ void	handle_events(t_game *game, int *running)
 		{
 			keyup(game, EVENT.key.keysym.sym);
 		}
-		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_ESCAPE)
+		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_SPACE && !JUMP)
 		{
-			*running = 0;
+			JUMP = JUMP_UP;
+		}
+		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_k && !JUMP)// to be removed
+		{
+			PLAYER_HEIGHT--;
+			printf("PLAYER_HEIGHT = %d%c------------------------%c", PLAYER_HEIGHT, 10, 10); fflush(stdout); //debug
+		}
+		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_i && !JUMP)
+		{
+			PLAYER_HEIGHT++;
+			printf("PLAYER_HEIGHT = %d%c------------------------%c", PLAYER_HEIGHT, 10, 10); fflush(stdout); //debug
+		}
+		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_l && !JUMP)// to be removed
+		{
+			PLAYER_HEIGHT = PLAYER_HEIGHT - 10;
+			printf("PLAYER_HEIGHT = %d%c------------------------%c", PLAYER_HEIGHT, 10, 10); fflush(stdout); //debug
+		}
+		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_o && !JUMP)
+		{
+			PLAYER_HEIGHT = PLAYER_HEIGHT + 10;
+			printf("PLAYER_HEIGHT = %d%c------------------------%c", PLAYER_HEIGHT, 10, 10); fflush(stdout); //debug
 		}
 		if (EVENT.type == SDL_CONTROLLERBUTTONDOWN && EVENT.cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSTICK)
 		{
@@ -43,6 +63,10 @@ void	handle_events(t_game *game, int *running)
 				PLAYER_SPEED = DEFAULT_SPEED + 2;
 			else
 				PLAYER_SPEED = DEFAULT_SPEED;
+		}
+		if (EVENT.type == SDL_KEYDOWN && EVENT.key.keysym.sym == SDLK_ESCAPE)
+		{
+			*running = 0;
 		}
 		if (EVENT.type == SDL_QUIT)
 		{
