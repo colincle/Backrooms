@@ -31,11 +31,11 @@
 # define PRINT_MAPS 	FALSE
 # define SHOW_MINIMAP 	FALSE
 # define SHOW_PATH_FIND FALSE
-# define SHOW_FPS		TRUE
+# define SHOW_FPS		FALSE
 # define SHOW_DIRECTION	FALSE
 # define SHOW_POSITION	FALSE
 # define SHOW_CAM_PLANE	FALSE
-# define MINIMAP_BLOCK	10
+# define MINIMAP_BLOCK	20
 
 // MAP CHARACTERS
 # define WALL			'#'
@@ -68,6 +68,19 @@
 # define DOOR_CLOSING	'd'
 # define DOOR_OPENING	'u'
 # define TRIGGER		'T'
+
+// HEIGHTS
+# define EMPTY_HEIGHT	0
+# define WALL_0_HEIGHT	200
+# define WALL_1_HEIGHT	650
+# define WALL_2_HEIGHT	1100
+# define WALL_3_HEIGHT	1600
+# define WALL_4_HEIGHT	2100
+# define WALL_5_HEIGHT	200
+# define WALL_6_HEIGHT	650
+# define WALL_7_HEIGHT	1100
+# define WALL_8_HEIGHT	1600
+# define WALL_9_HEIGHT	2100
 
 // KEYS
 # define W				0
@@ -133,7 +146,10 @@ typedef struct s_entity
 	t_float_xy			cam;
 	int					camera_shift;
 	int					player_base_height;
-	int					height;
+	int					standing_on;
+	int					player_height;
+	int					feet_height;
+	int					eye_height;
 	int					jumping;
 	int					crouching;
 }						t_entity;
@@ -269,10 +285,13 @@ typedef struct s_rendering_threads
 # define MAPS			game->maps
 # define LEVEL			game->level
 # define CAM_SHIFT		game->player[LEVEL]->camera_shift
-# define PLAYER_HEIGHT	game->player[LEVEL]->height
+# define FEET_HEIGHT	game->player[LEVEL]->feet_height
 # define JUMP			game->player[LEVEL]->jumping
 # define CROUCH			game->player[LEVEL]->crouching
 # define BASE_HEIGHT	game->player[LEVEL]->player_base_height
+# define STANDING_ON	game->player[LEVEL]->standing_on
+# define EYE_HEIGHT		game->player[LEVEL]->eye_height
+# define PLAYER_HEIGHT		game->player[LEVEL]->player_height
 # define EVENT			game->event
 # define ENEMY			game->ENEMY
 # define MOVING			game->moving

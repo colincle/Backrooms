@@ -38,7 +38,10 @@ static void	game_struct_init(t_game *game)
 	PLAYER_SPEED = DEFAULT_SPEED;
 	CAM_SHIFT = 0;
 	PLAYER_HEIGHT = 0;
+	FEET_HEIGHT = 0;
+	EYE_HEIGHT = 0;
 	BASE_HEIGHT = 0;
+	STANDING_ON = EMPTY;
 }
 
 static void	graphics_init(t_game *game)
