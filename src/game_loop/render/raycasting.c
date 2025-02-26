@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-void	ray_has_hit_wall(t_raycaster *r)
+static void	ray_has_hit_wall(t_raycaster *r)
 {
 	double	inv_ray_dir_x;
 	double	inv_ray_dir_y;
@@ -22,7 +22,7 @@ void	ray_has_hit_wall(t_raycaster *r)
 	r->wall_hit_y = r->pos_y + r->ray_dir_y * perp_dist;
 }
 
-int	store_mini_ray(t_mini_ray **head, t_raycaster r, char **map)
+static int	store_mini_ray(t_mini_ray **head, t_raycaster r, char **map)
 {
 	t_mini_ray	*new_node;
 

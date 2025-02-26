@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-char	*traversable(t_game *game, char c)
+static char	*traversable(t_game *game, char c)
 {
 	if (strchr("#.D49", c))
 		return (NULL);
@@ -46,7 +46,7 @@ char	*traversable(t_game *game, char c)
 	return (NULL);
 }
 
-int	get_block_height(char block)
+static int	get_block_height(char block)
 {
 	if (block == EMPTY)
 		return (EMPTY_HEIGHT);
@@ -63,7 +63,7 @@ int	get_block_height(char block)
 	return (0);
 }
 
-int	check_circle_collision(t_game *game, float x, float y)
+static int	check_circle_collision(t_game *game, float x, float y)
 {
 	int		i, cell_x, cell_y, block_ht, diff, collision_found;
 	int		best_diff, found;

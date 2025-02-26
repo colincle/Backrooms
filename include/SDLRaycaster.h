@@ -311,73 +311,128 @@ typedef struct s_rendering_threads
 # define WIND_HEIGHT		game->wind_height
 
 //==============================FUNCTIONS
+// controller.c
+void						left_stick(t_game *game);
+void						manage_controller(t_game *game);
 
-// Controls
-void	controller_init(t_game *game);
-void	keyboard_key_states_init(t_game *game);
-void	keydown(t_game *game, SDL_KeyCode code);
-void	keyup(t_game *game, SDL_KeyCode code);
-void	manage_controller(t_game *game);
+// keyboard.c
+void						keydown(t_game *game, SDL_KeyCode code);
+void						keyup(t_game *game, SDL_KeyCode code);
 
-// Debug
-void	debug_statements(t_game *game);
-void	draw_minimap(t_game *game);
-void	draw_cercle(SDL_Renderer *renderer, int centerX, int centerY, int radius);
-void	draw_column(SDL_Renderer *renderer, int x, int yStart, int yEnd, SDL_Color color);
+// debug_statements.c
+void						debug_statements(t_game *game);
+void						print_entities(t_game *game);
+void						print_all_maps(t_game *game);
 
-// Game Initialization
-t_game	*init_game(void);
-void	entities_init(t_game *game);
-char	**get_map(char *path);
-void	init_graphics(t_game *game);
-void	mouse_init(void);
-void	maps_init(t_game *game);
-void	sound_init(t_game *game);
-void	load_textures(t_game *game);
+// draw.c
+void						draw_column(SDL_Renderer *renderer, int x, int yStart, int yEnd, SDL_Color color);
+SDL_Color					int_to_color(Uint32 color);
+void						draw_cercle(SDL_Renderer *renderer, int centerX, int centerY, int radius);
 
-// Game Loop
-void	handle_events(t_game *game, int *running);
-void	manage_fps(t_game *game);
-void	render_next_frame(t_game *game);
-void	chapter_1(t_game *game, int *running);
-void	chapter_2(t_game *game, int *running);
-void	chapter_3(t_game *game, int *running);
-void	chapter_4(t_game *game, int *running);
-void	chapter_5(t_game *game, int *running);
+// minimap.c
+void						draw_minimap(t_game *game);
 
-// Entity Updates
-void	update_entities(t_game *game);
-void	collisions(t_game *game, float new_x, float new_y);
-void	move_player(t_game *game, int key);
-void	move_player_joystick(t_game *game, float x, float y);
-void	rotate_player(t_game *game, int x);
-void	rotate_player_mouse(t_game *game, int x);
-void	rotate_player_joystick(t_game *game, float x);
-void	look_up_and_down_mouse(t_game *game, int y);
-void	look_up_and_down_joystick(t_game *game, float x);
-void	crouch(t_game *game);
-void	jump(t_game *game);
-void	gravity(t_game *game);
+// entities_init.c
+void						set_player_cam(t_game *game, int i);
+void						entities_init(t_game *game);
 
-// Rendering
-void	clear_z_buffer(t_game *game);
-int		check_z_buffer(t_game *game, int index, float z);
-void	set_z_buffer(t_game *game, float perp_wall_dist, int index);
-void	draw_wall(t_game *game, t_raycaster *r, void *pixels);
-void	half_block_up(t_game *game, t_raycaster *r, void *pixels);
-void	half_down_block(t_game *game, t_raycaster *r, void *pixels);
-void	draw_floor_tile(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread, char type);
-void	draw_ceiling_tile(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread, char type);
-void	cast_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread);
-void	cast_offset_height_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread);
+// game_init.c
+t_game						*init_game(void);
 
-// Utilities
-void	cleanup(t_game *game);
-void	quit_game(t_game *game);
-char	*get_path(int i);
-char	*get_next_line(int fd);
-void	free_all(char **array);
-void	print_all_maps(t_game *game);
-void	print_entities(t_game *game);
+// get_map.c
+char						*get_path(int i);
+char						**get_map(char *path);
+
+// graphics_init.c
+void						init_graphics(t_game *game);
+void						pixel_buffers_init(t_game *game);
+
+// input_init.c
+void						keyboard_key_states_init(t_game *game);
+void						controller_init(t_game *game);
+void						mouse_init(void);
+
+// maps_init.c
+void						maps_init(t_game *game);
+
+// sound_init.c
+void						sound_init(t_game *game);
+
+// textures_init.c
+void						load_textures(t_game *game);
+
+// chapters.c
+void						chapter_1(t_game *game, int *running);
+void						chapter_2(t_game *game, int *running);
+void						chapter_3(t_game *game, int *running);
+void						chapter_4(t_game *game, int *running);
+void						chapter_5(t_game *game, int *running);
+
+// events.c
+void						handle_events(t_game *game, int *running);
+
+// frame_sync.c
+void						manage_fps(t_game *game);
+
+// floor_ceiling_render.c
+void						cast_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread);
+void						cast_offset_height_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread);
+
+// raycasting.c
+void						perform_raycaster_steps(t_raycaster *r, t_game *game);
+void						init_raycaster_steps(t_raycaster *r);
+void						init_raycaster(t_raycaster *r, t_game *game);
+
+// render.c
+void						render_next_frame(t_game *game);
+
+// wall_render.c
+void						half_down_block(t_game *game, t_raycaster *r, void *pixels);
+void						half_block_up(t_game *game, t_raycaster *r, void *pixels);
+void						draw_wall(t_game *game, t_raycaster *r, void *pixels);
+
+// z_buffer.c
+void						clear_z_buffer(t_game *game);
+int							check_z_buffer(t_game *game, int index, float z);
+void						set_z_buffer(t_game *game, float perp_wall_dist, int index);
+
+// sounds.c
+void						sounds(t_game *game);
+
+// camera_movements.c
+void						rotate_player_mouse(t_game *game, int x);
+void						rotate_player_joystick(t_game *game, float x);
+void						look_up_and_down_joystick(t_game *game, float x);
+void						look_up_and_down_mouse(t_game *game, int y);
+
+// collisions.c
+void						collisions(t_game *game, float new_x, float new_y);
+
+// player_horizontal_movement.c
+void						move_player(t_game *game, int key);
+void						move_player_joystick(t_game *game, float x, float y);
+
+// player_vertical_movement.c
+void						crouch(t_game *game);
+void						jump(t_game *game);
+void						gravity(t_game *game);
+void						update_player_height(t_game *game);
+
+// update_entities.c
+void						update_entities(t_game *game);
+
+// cleanup.c
+void						free_all(char **array);
+void						cleanup(t_game *game);
+
+// get_next_line.c
+char						*get_next_line(int fd);
+
+// misc.c
+char						*strjoin(const char *s1, const char *s2);
+void						free_all(char **array);
+
+//main.c
+void						quit_game(t_game *game);
 
 #endif

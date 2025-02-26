@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-void	draw_floor_tile(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread, char type)
+static void	draw_floor_tile(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread, char type)
 {
 	int		px, cell_x, cell_y, floor_tx, floor_ty;
 	Uint32	floor_color;
@@ -55,7 +55,7 @@ void	draw_floor_tile(t_game *game, t_floor_ceiling *f, t_rendering_threads *thre
 	}
 }
 
-void	draw_ceiling_tile(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread, char type)
+static void	draw_ceiling_tile(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread, char type)
 {
 	int		px, cell_x, cell_y, ceiling_tx, ceiling_ty;
 	int		y, x, p, row_start, pixel_index;

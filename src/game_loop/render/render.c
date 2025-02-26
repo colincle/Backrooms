@@ -5,7 +5,7 @@
 
 #include <SDLRaycaster.h>
 
-void	render_mini_rays(t_game *game, t_mini_ray **head, void *pixels)
+static void	render_mini_rays(t_game *game, t_mini_ray **head, void *pixels)
 {
 	t_mini_ray	*current = *head;
 	t_mini_ray	*temp;
@@ -25,7 +25,7 @@ void	render_mini_rays(t_game *game, t_mini_ray **head, void *pixels)
 	*head = NULL;
 }
 
-void	rendering_threads(t_rendering_threads *thread)
+static void	rendering_threads(t_rendering_threads *thread)
 {
 	t_raycaster			r;
 	t_floor_ceiling		f;

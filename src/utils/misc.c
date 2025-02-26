@@ -30,3 +30,19 @@ char	*strjoin(const char *s1, const char *s2)
 	strcat(result, s2);
 	return (result);
 }
+
+void	free_all(char **array)
+{
+	int	i;
+
+	if (!array)
+		return ;
+	i = 0;
+	while (array[i])
+	{
+		free(array[i]);
+		array[i] = NULL;
+		i++;
+	}
+	free(array);
+}

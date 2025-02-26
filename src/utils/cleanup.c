@@ -10,68 +10,64 @@ static void	free_entities(t_game *game)
 	int	i;
 	int	e;
 
-	if (!game)
+	if (!game || !game->player)
 		return ;
-	if (game->player)
-	{
-		i = 0;
-		while (i < NUMBER_OF_MAPS)
-			free(game->player[i++]);
-		free(game->player);
-		game->player = NULL;
-	}
-	if (game->enemy)
-	{
-		i = 0;
-		while (i < NUMBER_OF_MAPS)
-		{
-			if (game->enemy[i])
-			{
-				e = 0;
-				while (game->enemy[i][e])
-					free(game->enemy[i][e++]);
-				free(game->enemy[i]);
-			}
-			i++;
-		}
-		free(game->enemy);
-		game->enemy = NULL;
-	}
-}
-
-void	free_all(char **array)
-{
-	int		i;
-
 	i = 0;
-	if (!array)
-		return ;
-	while (array[i])
+	while (i < NUMBER_OF_MAPS)
 	{
-		free(array[i]);
+		if (game->player[i])
+		{
+			free(game->player[i]);
+			game->player[i] = NULL;
+		}
 		i++;
 	}
-	free(array);
+	free(game->player);
+	game->player = NULL;
+	if (!game->enemy)
+		return ;
+	i = 0;
+	while (i < NUMBER_OF_MAPS)
+	{
+		if (game->enemy[i])
+		{
+			e = 0;
+			while (game->enemy[i][e])
+			{
+				free(game->enemy[i][e]);
+				game->enemy[i][e] = NULL;
+				e++;
+			}
+			free(game->enemy[i]);
+			game->enemy[i] = NULL;
+		}
+		i++;
+	}
+	free(game->enemy);
+	game->enemy = NULL;
 }
 
 static void	free_all_maps(t_game *game)
 {
-	int		i;
+	int	i;
 
-	i = 0;
-	if (!game->maps)
+	if (!game || !game->maps)
 		return ;
+	i = 0;
 	while (game->maps[i])
 	{
 		free_all(game->maps[i]);
+		game->maps[i] = NULL;
 		i++;
 	}
 	free(game->maps);
 	game->maps = NULL;
 }
 
-void	cleanup_textures(t_game *game)
+static void	cleanup_textures(t_game *game)
 {
+	if (!game)
+		return ;
 	if (game->textures.wall.texture)
 	{
 		SDL_DestroyTexture(game->textures.wall.texture);
@@ -119,24 +115,45 @@ void	cleanup_textures(t_game *game)
 	}
 }
 
-void	cleanup_sounds(t_game *game)
+static void	cleanup_sounds(t_game *game)
 {
+	if (!game)
+		return ;
 	if (SOUNDS.ambient)
+	{
 		Mix_FreeMusic(SOUNDS.ambient);
+		SOUNDS.ambient = NULL;
+	}
 	if (SOUNDS.running)
+	{
 		Mix_FreeChunk(SOUNDS.running);
+		SOUNDS.running = NULL;
+	}
 	if (SOUNDS.walking)
+	{
 		Mix_FreeChunk(SOUNDS.walking);
+		SOUNDS.walking = NULL;
+	}
 	Mix_CloseAudio();
 }
 
 void	cleanup(t_game *game)
 {
+	if (!game)
+		return ;
 	cleanup_sounds(game);
 	cleanup_textures(game);
 	free_all_maps(game);
-	free(game->z_buffer);
-	free(game->screen);
+	if (game->z_buffer)
+	{
+		free(game->z_buffer);
+		game->z_buffer = NULL;
+	}
+	if (game->screen)
+	{
+		free(game->screen);
+		game->screen = NULL;
+	}
 	free_entities(game);
 	free(game);
 	quit_game(game);
