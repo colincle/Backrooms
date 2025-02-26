@@ -15,8 +15,40 @@ void	get_P_cores(t_game *game)
 		game->P_cores = 0;
 }
 
-static void	game_struct_init(t_game *game)
+void	init_game_variables(t_game *game)
 {
+	game->fps = 0;
+	game->level = 0;
+	game->maps = NULL;
+	game->player = NULL;
+	game->enemy = NULL;
+	game->speed = DEFAULT_SPEED;
+	game->moving = 0;
+	game->window = NULL;
+	game->renderer = NULL;
+	game->wind_width = 0;
+	game->wind_height = 0;
+	game->z_buffer = NULL;
+	game->vector_grid = NULL;
+	game->screen = NULL;
+	game->P_cores = 0;
+	game->event = (SDL_Event){0};
+	game->input = (t_input){0};
+	game->textures = (t_textures){0};
+	game->sounds = (t_sounds){0};
+}
+
+
+static t_game	*game_struct_init()
+{
+	t_game *game;
+	game = malloc(sizeof(t_game));
+	if (!game)
+	{
+		fprintf(stderr, "ERROR: memory allocation failed in game_init");
+		exit(EXIT_FAILURE);
+	}
+	init_game_variables(game);
 	init_maps(game);
 	print_all_maps(game);
 	init_vector_grid(game);
@@ -35,13 +67,6 @@ static void	game_struct_init(t_game *game)
 		fprintf(stderr, "ERROR: memory allocation failed in game_struct_init");
 		cleanup(game);
 	}
-	PLAYER_SPEED = DEFAULT_SPEED;
-	CAM_SHIFT = 0;
-	PLAYER_HEIGHT = 0;
-	FEET_HEIGHT = 0;
-	EYE_HEIGHT = 0;
-	BASE_HEIGHT = 0;
-	STANDING_ON = EMPTY;
 }
 
 static void	graphics_init(t_game *game)
@@ -193,17 +218,11 @@ t_game	*game_init(void)
 {
 	t_game	*game;
 
-	game = malloc(sizeof(t_game));
-	if (!game)
-	{
-		fprintf(stderr, "ERROR: memory allocation failed in game_init");
-		exit(EXIT_FAILURE);
-	}
+	game = game_struct_init();
 	controller_init(game);
 	graphics_init(game);
 	sound_init(game);
 	load_textures(game);
-	game_struct_init(game);
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "0");
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	return (game);
