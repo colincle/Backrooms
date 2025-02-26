@@ -70,26 +70,6 @@ static void	free_all_maps(t_game *game)
 	game->maps = NULL;
 }
 
-static void	free_vector_grid(t_game *game)
-{
-	int	i;
-	int	y;
-
-	if (!game || !game->vector_grid)
-		return ;
-	i = 0;
-	while (game->vector_grid[i])
-	{
-		y = 0;
-		while (game->vector_grid[i][y])
-			free(game->vector_grid[i][y++]);
-		free(game->vector_grid[i]);
-		i++;
-	}
-	free(game->vector_grid);
-	game->vector_grid = NULL;
-}
-
 void	cleanup_textures(t_game *game)
 {
 	if (game->textures.wall.texture)
@@ -158,7 +138,6 @@ void	cleanup(t_game *game)
 	free(game->z_buffer);
 	free(game->screen);
 	free_entities(game);
-	free_vector_grid(game);
 	free(game);
 	quit_game(game);
 }

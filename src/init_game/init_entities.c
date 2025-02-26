@@ -117,13 +117,13 @@ void	init_entities(t_game *game)
 	if (!game->player)
 	{
 		fprintf(stderr, "ERROR: memory allocation failed in init_entities");
-		exit(EXIT_FAILURE);
+		cleanup(game);
 	}
 	game->enemy = malloc(sizeof(t_entity **) * NUMBER_OF_MAPS);
 	if (!game->enemy)
 	{
 		fprintf(stderr, "ERROR: memory allocation failed in init_entities");
-		exit(EXIT_FAILURE);
+		cleanup(game);
 	}
 	while (i < NUMBER_OF_MAPS)
 	{

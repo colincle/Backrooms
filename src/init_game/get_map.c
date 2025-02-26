@@ -71,7 +71,7 @@ char	**get_map(char *path)
 	{
 		close(fd);
 		fprintf(stderr, "ERROR: memory allocation failed in get_map");
-		exit(EXIT_FAILURE);
+		return (NULL);
 	}
 	line = get_next_line(fd);
 	while (line)

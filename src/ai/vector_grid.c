@@ -69,29 +69,3 @@ static t_float_xy	cast_single_ray(t_game *game, float start_x, float start_y, fl
 	return ((t_float_xy){r.ray_dir_x, r.ray_dir_y});
 }
 
-void	update_vector_grid(t_game *game)
-{
-	int			x;
-	int			y;
-	t_float_xy	vector;
-
-	y = 0;
-	while (MAPS[LEVEL][y])
-	{
-		x = 0;
-		while (MAPS[LEVEL][y][x])
-		{
-			if (MAPS[LEVEL][y][x] == EMPTY)
-			{
-				vector = cast_single_ray(game, x + 0.5, y + 0.5, PLAYER_X, PLAYER_Y);
-				if (vector.x != 0 && vector.y != 0)
-				{
-					VECTOR_GRID[LEVEL][y][x].x = vector.x;
-					VECTOR_GRID[LEVEL][y][x].y = vector.y;
-				}
-			}
-			x++;
-		}
-		y++;
-	}
-}

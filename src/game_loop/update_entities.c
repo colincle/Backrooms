@@ -491,6 +491,5 @@ static void	update_player(t_game *game)
 
 void	update_entities(t_game *game)
 {
-	update_vector_grid(game);
 	update_player(game);
 }

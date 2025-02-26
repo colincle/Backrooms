@@ -30,7 +30,6 @@
 # define PRINT_ENTITIES FALSE
 # define PRINT_MAPS 	FALSE
 # define SHOW_MINIMAP 	FALSE
-# define SHOW_PATH_FIND FALSE
 # define SHOW_FPS		FALSE
 # define SHOW_DIRECTION	FALSE
 # define SHOW_POSITION	FALSE
@@ -266,7 +265,6 @@ typedef struct s_game
 	int					wind_width;
 	int					wind_height;
 	float				*z_buffer;
-	t_float_xy			***vector_grid;
 	t_sounds			sounds;
 	Uint32				*screen;
 	int					P_cores;
@@ -303,7 +301,6 @@ typedef struct s_rendering_threads
 # define WIND_WIDTH		game->wind_width
 # define WIND_HEIGHT	game->wind_height
 # define PLAYER_SPEED	game->speed
-# define VECTOR_GRID	game->vector_grid
 # define MOUSE_X		game->input.mouse_x_rel
 # define MOUSE_Y		game->input.mouse_y_rel
 # define PLAYER_X		game->player[(LEVEL)]->x
@@ -335,10 +332,8 @@ void					print_all_maps(t_game *game);
 Uint32					start_timer(Uint32 milliseconds);
 void					print_entities(t_game *game);
 void					update_entities(t_game *game);
-void					init_vector_grid(t_game *game);
 void					debug_statements(t_game *game);
 void					render_next_frame(t_game *game);
-void					update_vector_grid(t_game *game);
 void					rotate_player(t_game *game, int x);
 void					set_player_cam(t_game *game, int i);
 void					manage_controller(t_game *game);

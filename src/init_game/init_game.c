@@ -15,58 +15,35 @@ void	get_P_cores(t_game *game)
 		game->P_cores = 0;
 }
 
-void	init_game_variables(t_game *game)
+static t_game	*game_struct_init(void)
 {
-	game->fps = 0;
-	game->level = 0;
-	game->maps = NULL;
-	game->player = NULL;
-	game->enemy = NULL;
-	game->speed = DEFAULT_SPEED;
-	game->moving = 0;
-	game->window = NULL;
-	game->renderer = NULL;
-	game->wind_width = 0;
-	game->wind_height = 0;
-	game->z_buffer = NULL;
-	game->vector_grid = NULL;
-	game->screen = NULL;
-	game->P_cores = 0;
-	game->event = (SDL_Event){0};
-	game->input = (t_input){0};
-	game->textures = (t_textures){0};
-	game->sounds = (t_sounds){0};
-}
+	t_game	*game;
 
-
-static t_game	*game_struct_init()
-{
-	t_game *game;
 	game = malloc(sizeof(t_game));
 	if (!game)
 	{
 		fprintf(stderr, "ERROR: memory allocation failed in game_init");
 		exit(EXIT_FAILURE);
 	}
-	init_game_variables(game);
-	init_maps(game);
-	print_all_maps(game);
-	init_vector_grid(game);
-	init_entities(game);
-	print_entities(game);
-	get_P_cores(game);
-	game->z_buffer = calloc(WIND_HEIGHT * WIND_WIDTH, sizeof(float));
-	if (!game->z_buffer)
-		cleanup(game);
-	game->screen = calloc(WIND_HEIGHT * WIND_WIDTH, sizeof(float));
-	if (!game->z_buffer)
-		cleanup(game);
-	KEYS = malloc(sizeof(int) * HOW_MANY_KEYS);
-	if (!KEYS)
-	{
-		fprintf(stderr, "ERROR: memory allocation failed in game_struct_init");
-		cleanup(game);
-	}
+	game->fps = 0;
+	game->level = 0;
+	game->speed = DEFAULT_SPEED;
+	game->moving = 0;
+	game->wind_width = 0;
+	game->wind_height = 0;
+	game->P_cores = 0;
+	game->event = (SDL_Event){0};
+	game->input = (t_input){0};
+	game->textures = (t_textures){0};
+	game->sounds = (t_sounds){0};
+	game->maps = NULL;
+	game->player = NULL;
+	game->enemy = NULL;
+	game->window = NULL;
+	game->renderer = NULL;
+	game->z_buffer = NULL;
+	game->screen = NULL;
+	return (game);
 }
 
 static void	graphics_init(t_game *game)
@@ -126,19 +103,12 @@ void	load_texture(t_game *game, const char *path, t_texture *dest)
 {
 	SDL_Surface	*surface;
 
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-	{
-		printf("IMG_Init Error: %s\n", IMG_GetError());
-		cleanup(game);
-	}
-	surface = IMG_Load(path);
-	if (!surface)
+	if (!(surface = IMG_Load(path)))
 	{
 		printf("IMG_Load Error: %s\n", IMG_GetError());
 		cleanup(game);
 	}
-	dest->texture = SDL_CreateTextureFromSurface(game->renderer, surface);
-	if (!dest->texture)
+	if (!(dest->texture = SDL_CreateTextureFromSurface(game->renderer, surface)))
 	{
 		printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
 		SDL_FreeSurface(surface);
@@ -146,8 +116,7 @@ void	load_texture(t_game *game, const char *path, t_texture *dest)
 	}
 	dest->width = surface->w;
 	dest->height = surface->h;
-	dest->pixels = (Uint32 *)malloc(dest->width * dest->height * sizeof(Uint32));
-	if (!dest->pixels)
+	if (!(dest->pixels = malloc(dest->width * dest->height * sizeof(Uint32))))
 	{
 		printf("Memory allocation failed for texture pixels\n");
 		SDL_FreeSurface(surface);
@@ -155,11 +124,15 @@ void	load_texture(t_game *game, const char *path, t_texture *dest)
 	}
 	memcpy(dest->pixels, surface->pixels, dest->width * dest->height * sizeof(Uint32));
 	SDL_FreeSurface(surface);
-	SDL_QueryTexture(dest->texture, NULL, NULL, &dest->width, &dest->height);
 }
 
 void	load_textures(t_game *game)
 {
+	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+	{
+		printf("IMG_Init Error: %s\n", IMG_GetError());
+		cleanup(game);
+	}
 	game->textures.screen_texture = SDL_CreateTexture
 		(
 			game->renderer,
@@ -223,6 +196,23 @@ t_game	*game_init(void)
 	graphics_init(game);
 	sound_init(game);
 	load_textures(game);
+	init_maps(game);
+	print_all_maps(game);
+	init_entities(game);
+	print_entities(game);
+	get_P_cores(game);
+	game->z_buffer = calloc(WIND_HEIGHT * WIND_WIDTH, sizeof(float));
+	if (!game->z_buffer)
+		cleanup(game);
+	game->screen = calloc(WIND_HEIGHT * WIND_WIDTH, sizeof(float));
+	if (!game->z_buffer)
+		cleanup(game);
+	KEYS = malloc(sizeof(int) * HOW_MANY_KEYS);
+	if (!KEYS)
+	{
+		fprintf(stderr, "ERROR: memory allocation failed in game_struct_init");
+		cleanup(game);
+	}
 	SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "0");
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	return (game);
