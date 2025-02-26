@@ -30,7 +30,7 @@ LDFLAGS = -arch x86_64 -L$(LIBS)/lib -L/usr/local/lib -lpthread \
           -force_load $(LIBS)/lib/libopus.a \
           -force_load $(LIBS)/lib/libvorbisenc.a \
           -Wl,-undefined,dynamic_lookup \
-          -mmacosx-version-min=13.0 \
+          -mmacosx-version-min=14.3 \
           -lc++ -lpng \
           -framework Cocoa -framework IOKit -framework CoreVideo \
           -framework CoreFoundation -framework AudioToolbox -framework ForceFeedback \
