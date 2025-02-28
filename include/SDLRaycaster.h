@@ -68,19 +68,6 @@
 # define DOOR_OPENING		'u'
 # define TRIGGER			'T'
 
-// HEIGHTS
-# define EMPTY_HEIGHT		0
-# define WALL_0_HEIGHT		200
-# define WALL_1_HEIGHT		650
-# define WALL_2_HEIGHT		1100
-# define WALL_3_HEIGHT		1600
-# define WALL_4_HEIGHT		2100
-# define WALL_5_HEIGHT		200
-# define WALL_6_HEIGHT		650
-# define WALL_7_HEIGHT		1100
-# define WALL_8_HEIGHT		1600
-# define WALL_9_HEIGHT		2100
-
 // KEYS
 # define W					0
 # define A					1
@@ -133,11 +120,7 @@ typedef struct s_entity
 	t_float_xy				dir;
 	t_float_xy				cam;
 	int						camera_shift;
-	int						player_base_height;
 	int						standing_on;
-	int						player_height;
-	int						feet_height;
-	int						eye_height;
 	int						jumping;
 	int						crouching;
 	int						speed;
@@ -148,6 +131,28 @@ typedef struct s_enemy
 	float					y;
 	t_float_xy				dir;
 }							t_enemy;
+
+typedef struct s_heights
+{
+	int						empty;
+	int						wall_0;
+	int						wall_1;
+	int						wall_2;
+	int						wall_3;
+	int						wall_4;
+	int						wall_5;
+	int						wall_6;
+	int						wall_7;
+	int						wall_8;
+	int						wall_9;
+	int						crouch;
+	int						crawl;
+	int						jump;
+	int						height_cap;
+	int						feet_height;
+	int						eye_height;
+	int						player_height;
+}							t_heights;
 
 typedef struct s_frames
 {
@@ -264,6 +269,7 @@ typedef struct s_game
 	float					*z_buffer;
 	t_sounds				sounds;
 	Uint32					*screen;
+	t_heights				heights;
 	int						P_cores;
 }							t_game;
 
@@ -278,13 +284,9 @@ typedef struct s_rendering_threads
 
 // STRUCT ACCESS MACROS
 # define CAM_SHIFT			game->player[LEVEL]->camera_shift
-# define FEET_HEIGHT		game->player[LEVEL]->feet_height
 # define JUMP				game->player[LEVEL]->jumping
 # define CROUCH				game->player[LEVEL]->crouching
-# define BASE_HEIGHT		game->player[LEVEL]->player_base_height
 # define STANDING_ON		game->player[LEVEL]->standing_on
-# define EYE_HEIGHT			game->player[LEVEL]->eye_height
-# define PLAYER_HEIGHT		game->player[LEVEL]->player_height
 # define PLAYER_X			game->player[(LEVEL)]->x
 # define PLAYER_Y			game->player[(LEVEL)]->y
 # define PLAYER_DIR_X		game->player[(LEVEL)]->dir.x
@@ -316,11 +318,30 @@ typedef struct s_rendering_threads
 # define TEXTURE_HEIGHT		game->texture_height
 # define WIND_WIDTH			game->wind_width
 # define WIND_HEIGHT		game->wind_height
+#define EMPTY_HEIGHT		game->heights.empty
+#define WALL_0_HEIGHT		game->heights.wall_0
+#define WALL_1_HEIGHT		game->heights.wall_1
+#define WALL_2_HEIGHT		game->heights.wall_2
+#define WALL_3_HEIGHT		game->heights.wall_3
+#define WALL_4_HEIGHT		game->heights.wall_4
+#define WALL_5_HEIGHT		game->heights.wall_5
+#define WALL_6_HEIGHT		game->heights.wall_6
+#define WALL_7_HEIGHT		game->heights.wall_7
+#define WALL_8_HEIGHT		game->heights.wall_8
+#define WALL_9_HEIGHT		game->heights.wall_9
+#define CROUCH_HEIGHT		game->heights.crouch
+#define CRAWL_HEIGHT		game->heights.crawl
+#define JUMP_HEIGHT			game->heights.jump
+#define HEIGHT_CAP			game->heights.height_cap
+#define FEET_HEIGHT			game->heights.feet_height
+#define EYE_HEIGHT			game->heights.eye_height
+#define PLAYER_HEIGHT		game->heights.player_height
+
 
 //==============================FUNCTIONS
 // controller.c
-void						left_stick(t_game *game);
-void						manage_controller(t_game *game);
+void						controller_keydown(t_game *game, SDL_GameControllerButton button);
+void						controller_keyup(t_game *game, SDL_GameControllerButton button);
 
 // keyboard.c
 void						keydown(t_game *game, SDL_KeyCode code);
@@ -416,6 +437,7 @@ void						look_up_and_down_mouse(t_game *game, int y);
 void						collisions(t_game *game, float new_x, float new_y);
 
 // player_horizontal_movement.c
+void						left_stick(t_game *game);
 void						move_player(t_game *game, int key);
 void						move_player_joystick(t_game *game, float x, float y);
 

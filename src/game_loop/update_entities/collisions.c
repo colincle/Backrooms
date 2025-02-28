@@ -5,48 +5,28 @@
 
 #include <SDLRaycaster.h>
 
-static char	*traversable(t_game *game, char c)
+static int	traversable(t_game *game, char c)
 {
-	if (strchr("#.D49", c))
-		return (NULL);
-	if (strchr(" 0T", c))
-		return ((char *)"always");
-	if (strchr("5678", c))
-	{
-		if (PLAYER_HEIGHT < -540)
-		{
-			return ((char *)"5-8");
-		}
-		else if (PLAYER_HEIGHT < -110)
-		{
-			if (strchr("765", c))
-				return ((char *)"5-7");
-			else
-				return (NULL);
-		}
-		else if (PLAYER_HEIGHT < 320)
-		{
-			if (strchr("56", c))
-				return ((char *)"5-6");
-			else
-				return (NULL);
-		}
-		else
-		{
-			return (NULL);
-		}
-	}
-	if (strchr("123", c))
-	{
-		if (FEET_HEIGHT >= WALL_1_HEIGHT)
-			return ((char *)"1-3");
-		else
-			return (NULL);
-	}
-	return (NULL);
+	if (c == WALL || c == WALL_4 || c == WALL_9)
+		return (0);
+	else if (c == WALL_1)
+		return (FEET_HEIGHT >= WALL_1_HEIGHT);
+	else if (c == WALL_2)
+		return (FEET_HEIGHT >= WALL_1_HEIGHT);
+	else if (c == WALL_3)
+		return (FEET_HEIGHT >= WALL_1_HEIGHT);
+	else if (c == WALL_5)
+		return (PLAYER_HEIGHT < WALL_5_HEIGHT);
+	else if (c == WALL_6)
+		return (PLAYER_HEIGHT < WALL_6_HEIGHT);
+	else if (c == WALL_7)
+		return (PLAYER_HEIGHT < WALL_7_HEIGHT);
+	else if (c == WALL_8)
+		return (PLAYER_HEIGHT < WALL_8_HEIGHT);
+	return (1);
 }
 
-static int	get_block_height(char block)
+static int	get_block_height(t_game *game, char block)
 {
 	if (block == EMPTY)
 		return (EMPTY_HEIGHT);
@@ -93,7 +73,7 @@ static int	check_circle_collision(t_game *game, float x, float y)
 		block = MAPS[LEVEL][cell_y][cell_x];
 		if (!traversable(game, block))
 			collision_found = TRUE;
-		block_ht = get_block_height(block);
+		block_ht = get_block_height(game, block);
 		diff = abs(PLAYER_HEIGHT - block_ht);
 		if (diff < best_diff)
 		{

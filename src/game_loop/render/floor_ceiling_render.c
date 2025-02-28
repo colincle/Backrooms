@@ -15,7 +15,7 @@ static void	draw_floor_tile(t_game *game, t_floor_ceiling *f, t_rendering_thread
 
 	height = (type == WALL_0) * 0.402 + (type == WALL_1) * 0.202
 		+ (type == WALL_2) * 0.0 + (type == WALL_3) * -0.200;
-	pos_z = height * TEXTURE_HEIGHT + (PLAYER_HEIGHT / 2);
+	pos_z = height * TEXTURE_HEIGHT + ((PLAYER_HEIGHT - TEXTURE_HEIGHT) / 2);
 	f->floor_pixels = game->textures.floor_light.pixels;
 	y = f->horizon - 1;
 	while (++y < TEXTURE_HEIGHT)
@@ -65,7 +65,7 @@ static void	draw_ceiling_tile(t_game *game, t_floor_ceiling *f, t_rendering_thre
 
 	height = (type == WALL_5) * 0.400 + (type == WALL_6) * 0.202
 		+ (type == WALL_7) * 0.0 + (type == WALL_8) * -0.200;
-	pos_z = height * TEXTURE_HEIGHT - (PLAYER_HEIGHT / 2);
+	pos_z = height * TEXTURE_HEIGHT - ((PLAYER_HEIGHT - TEXTURE_HEIGHT) / 2);
 	f->ceiling_pixels = game->textures.ceiling_dark.pixels;
 	y = -1;
 	while (++y < f->horizon)
@@ -123,7 +123,7 @@ void	cast_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_thread
 	f->ray_dir_y_0 = PLAYER_DIR_Y - PLAYER_CAM_Y;
 	f->ray_dir_x_1 = PLAYER_DIR_X + PLAYER_CAM_X;
 	f->ray_dir_y_1 = PLAYER_DIR_Y + PLAYER_CAM_Y;
-	pos_z = 0.5 * TEXTURE_HEIGHT - (PLAYER_HEIGHT / 2);
+	pos_z = 0.5 * TEXTURE_HEIGHT - ((PLAYER_HEIGHT - TEXTURE_HEIGHT) / 2);
 	for (y = 0; y < f->horizon; y += 1)
 	{
 		p = (TEXTURE_HEIGHT / 2) - y + CAM_SHIFT;
@@ -167,7 +167,7 @@ void	cast_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_thread
 			ceiling_y += step_y;
 		}
 	}
-	pos_z = 0.5 * TEXTURE_HEIGHT + (PLAYER_HEIGHT / 2);
+	pos_z = 0.5 * TEXTURE_HEIGHT + ((PLAYER_HEIGHT - TEXTURE_HEIGHT) / 2);
 	for (y = f->horizon; y < TEXTURE_HEIGHT; y++)
 	{
 		p = y - (TEXTURE_HEIGHT / 2) - CAM_SHIFT;
@@ -218,7 +218,8 @@ void	cast_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_thread
 
 void	cast_offset_height_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_rendering_threads *thread)
 {
-	if (PLAYER_HEIGHT >= -620 && PLAYER_HEIGHT <= -430)
+	int	height = PLAYER_HEIGHT;
+	if (height >= EMPTY_HEIGHT && height <= WALL_1_HEIGHT)
 	{
 		draw_floor_tile(thread->game, f, thread, WALL_0);
 		draw_ceiling_tile(thread->game, f, thread, WALL_5);
@@ -226,7 +227,7 @@ void	cast_offset_height_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_re
 		draw_ceiling_tile(thread->game, f, thread, WALL_7);
 		draw_ceiling_tile(thread->game, f, thread, WALL_8);
 	}
-	else if (PLAYER_HEIGHT > -430 && PLAYER_HEIGHT <= 0)
+	else if (height > WALL_1_HEIGHT && height <= WALL_2_HEIGHT)
 	{
 		draw_floor_tile(thread->game, f, thread, WALL_0);
 		draw_floor_tile(thread->game, f, thread, WALL_1);
@@ -234,7 +235,7 @@ void	cast_offset_height_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_re
 		draw_ceiling_tile(thread->game, f, thread, WALL_6);
 		draw_ceiling_tile(thread->game, f, thread, WALL_7);
 	}
-	else if (PLAYER_HEIGHT > 0 && PLAYER_HEIGHT <= 430)
+	else if (height > WALL_2_HEIGHT && height <= WALL_3_HEIGHT)
 	{
 		draw_floor_tile(thread->game, f, thread, WALL_0);
 		draw_floor_tile(thread->game, f, thread, WALL_1);
@@ -242,7 +243,7 @@ void	cast_offset_height_floor_and_ceiling(t_game *game, t_floor_ceiling *f, t_re
 		draw_ceiling_tile(thread->game, f, thread, WALL_5);
 		draw_ceiling_tile(thread->game, f, thread, WALL_6);
 	}
-	else if (PLAYER_HEIGHT > 430)
+	else if (height > WALL_3_HEIGHT)
 	{
 		draw_floor_tile(thread->game, f, thread, WALL_0);
 		draw_floor_tile(thread->game, f, thread, WALL_1);

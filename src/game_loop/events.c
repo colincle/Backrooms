@@ -28,7 +28,7 @@ void	handle_events(t_game *game, int *running)
 		else if (EVENT.type == SDL_KEYDOWN)
 		{
 			keydown(game, EVENT.key.keysym.sym);
-			if (EVENT.key.keysym.sym == SDLK_SPACE && !JUMP)
+			if (EVENT.key.keysym.sym == SDLK_SPACE)
 				JUMP = JUMP_UP;
 			else if (EVENT.key.keysym.sym == SDLK_k && !JUMP) // to be removed
 				printf("PLAYER_HEIGHT = %d\n", --PLAYER_HEIGHT); // to be removed
@@ -45,10 +45,14 @@ void	handle_events(t_game *game, int *running)
 		{
 			keyup(game, EVENT.key.keysym.sym);
 		}
-		else if (EVENT.type == SDL_CONTROLLERBUTTONDOWN && EVENT.cbutton.button == SDL_CONTROLLER_BUTTON_LEFTSTICK)
+		else if (EVENT.type == SDL_CONTROLLERBUTTONDOWN)
 		{
-			PLAYER_SPEED = (PLAYER_SPEED == DEFAULT_SPEED) ? DEFAULT_SPEED + 2 : DEFAULT_SPEED;
+			controller_keydown(game, EVENT.cbutton.button);
 		}
+		else if (EVENT.type == SDL_CONTROLLERBUTTONUP)
+		{
+			controller_keyup(game, EVENT.cbutton.button);
+		}		
 		else if (EVENT.type == SDL_QUIT)
 		{
 			*running = 0;

@@ -20,7 +20,7 @@ void	half_down_block(t_game *game, t_raycaster *r, void *pixels)
 	inv_perp_wall_dist = 1.0 / (r->perp_wall_dist / 2);
 	line_height = (int)(texture_height * inv_perp_wall_dist);
 	start = ((texture_height - line_height) >> 1) + CAM_SHIFT
-		+ (PLAYER_HEIGHT / r->perp_wall_dist);
+		+ ((PLAYER_HEIGHT - TEXTURE_HEIGHT) / r->perp_wall_dist);
 	normalized = (r->detected - 5) / 4.0;
 	block_height = (int)(line_height * (0.1 + (normalized * 0.8)));
 	wall_x = (r->side == 0)
@@ -83,7 +83,7 @@ void	half_block_up(t_game *game, t_raycaster *r, void *pixels)
 	tex_h = game->textures.wall.height;
 	inv_perp_wall_dist = 1.0 / (r->perp_wall_dist / 2);
 	line_height = ((int)(texture_height * inv_perp_wall_dist) + 4);
-	start = ((texture_height - line_height) >> 1) + CAM_SHIFT + (PLAYER_HEIGHT / r->perp_wall_dist);
+	start = ((texture_height - line_height) >> 1) + CAM_SHIFT + ((PLAYER_HEIGHT - TEXTURE_HEIGHT) / r->perp_wall_dist);
 	normalized = r->detected / 4.0;
 	block_height = (int)(line_height * (0.1 + (normalized * 0.8)));
 	wall_x = (r->side == 0)
@@ -141,7 +141,7 @@ void	draw_wall(t_game *game, t_raycaster *r, void *pixels)
 	inv_perp_wall_dist = 1.0 / (r->perp_wall_dist / 2);
 	line_height = ((int)(texture_height * inv_perp_wall_dist) + 4);
 	start = ((texture_height - line_height) >> 1) + CAM_SHIFT
-		+ (PLAYER_HEIGHT / r->perp_wall_dist);
+		+ ((PLAYER_HEIGHT - TEXTURE_HEIGHT) / r->perp_wall_dist);
 	wall_x = (r->side == 0) * (r->pos_y + r->perp_wall_dist * r->ray_dir_y)
 		+ (r->side == 1) * (r->pos_x + r->perp_wall_dist * r->ray_dir_x);
 	wall_x -= (int)wall_x;

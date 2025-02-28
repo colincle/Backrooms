@@ -7,6 +7,7 @@
 
 static void	update_player(t_game *game)
 {
+	left_stick(game);
 	if (KEYS[W])
 		move_player(game, W);
 	if (KEYS[S])
@@ -29,12 +30,14 @@ static void	update_player(t_game *game)
 		MOVING = STILL;
 	if (JUMP)
 		jump(game);
-	// crouch(game);
-	// gravity(game);
-	// update_player_height(game);
+	crouch(game);
+	gravity(game);
+	update_player_height(game);
 }
 
 void	update_entities(t_game *game)
 {
+
 	update_player(game);
+
 }

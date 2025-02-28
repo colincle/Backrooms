@@ -5,27 +5,18 @@
 
 #include <SDLRaycaster.h>
 
-void	left_stick(t_game *game)
+void	controller_keydown(t_game *game, SDL_GameControllerButton button)
 {
-	static int	last_time;
-	int			new_time;
-	int			ellapsed;
-
-	new_time = SDL_GetTicks();
-	ellapsed = new_time - last_time;
-	if (fabs(JOYSTICK_Y) < 0.1 && fabs(JOYSTICK_X) < 0.1)
-	{
-		if (ellapsed > 100)
-		{
-			if (!KEYS[SHIFT])
-				PLAYER_SPEED = DEFAULT_SPEED;
-		}
-	}
-	else
-		last_time = new_time;
+	if (button == SDL_CONTROLLER_BUTTON_A)
+		JUMP = JUMP_UP;
+	else if (button == SDL_CONTROLLER_BUTTON_B)
+		KEYS[C] = TRUE;
+	else if (SDL_CONTROLLER_BUTTON_LEFTSTICK)
+		PLAYER_SPEED = (PLAYER_SPEED == DEFAULT_SPEED) ? DEFAULT_SPEED + 2 : DEFAULT_SPEED;
 }
 
-void	manage_controller(t_game *game)
+void	controller_keyup(t_game *game, SDL_GameControllerButton button)
 {
-	left_stick(game);
+	if (button == SDL_CONTROLLER_BUTTON_B)
+		KEYS[C] = FALSE;
 }

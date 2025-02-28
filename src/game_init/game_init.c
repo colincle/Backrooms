@@ -5,6 +5,21 @@
 
 #include <SDLRaycaster.h>
 
+int	set_height(t_game *game, float percentage)
+{
+	// Clamp percentage between 0 and 100
+	if (percentage < 0.0f)
+		percentage = 0.0f;
+	if (percentage > 100.0f)
+		percentage = 100.0f;
+
+	// Scale percentage from 0% (ground) to 100% (twice the texture height)
+	float scaled_height = (percentage / 100.0f) * (TEXTURE_HEIGHT * 2.0f);
+
+	return (int)scaled_height;
+}
+
+
 static void	get_P_cores(t_game *game)
 {
 	int		pcores = 0;
@@ -49,13 +64,40 @@ static t_game	*game_struct_init(void)
 	return (game);
 }
 
+static void	heights_init(t_game *game)
+{
+	game->heights.empty = set_height(game, 0);
+	game->heights.wall_0 = set_height(game, 10);
+	game->heights.wall_1 = set_height(game, 30);
+	game->heights.wall_2 = set_height(game, 50);
+	game->heights.wall_3 = set_height(game, 70);
+	game->heights.wall_4 = set_height(game, 80);
+	game->heights.wall_5 = set_height(game, 80);
+	game->heights.wall_6 = set_height(game, 70);
+	game->heights.wall_7 = set_height(game, 50);
+	game->heights.wall_8 = set_height(game, 30);
+	game->heights.wall_9 = set_height(game, 10);
+	game->heights.crouch = set_height(game, 35);
+	game->heights.crawl = set_height(game, 20);
+	game->heights.jump = set_height(game, 25);
+	game->heights.height_cap = set_height(game, 45);
+	game->heights.player_height = set_height(game, 50);
+	game->heights.eye_height = set_height(game, 50);
+	game->heights.feet_height = set_height(game, 0);
+	
+	printf("feet %d%c------------------------%c", FEET_HEIGHT, 10, 10);
+	fflush(stdout); // Debug
+}
+
+
+
 t_game	*init_game(void)
 {
 	t_game	*game;
 
 	game = game_struct_init();
-	init_graphics(game);
 	controller_init(game);
+	init_graphics(game);
 	mouse_init();
 	sound_init(game);
 	load_textures(game);
@@ -64,6 +106,7 @@ t_game	*init_game(void)
 	entities_init(game);
 	print_entities(game);
 	pixel_buffers_init(game);
+	heights_init(game);
 
 	return (game);
 }

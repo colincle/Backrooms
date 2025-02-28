@@ -24,11 +24,7 @@ static void	level_trigger(t_game *game)
 		game->player[LEVEL + 1]->cam.x = PLAYER_CAM_X;
 		game->player[LEVEL + 1]->cam.y = PLAYER_CAM_Y;
 		game->player[LEVEL + 1]->camera_shift = CAM_SHIFT;
-		game->player[LEVEL + 1]->player_base_height = BASE_HEIGHT;
 		game->player[LEVEL + 1]->standing_on = STANDING_ON;
-		game->player[LEVEL + 1]->player_height = PLAYER_HEIGHT;
-		game->player[LEVEL + 1]->feet_height = FEET_HEIGHT;
-		game->player[LEVEL + 1]->eye_height = EYE_HEIGHT;
 		game->player[LEVEL + 1]->jumping = JUMP;
 		game->player[LEVEL + 1]->crouching = CROUCH;
 		LEVEL++;
@@ -49,7 +45,6 @@ static void	game_loop(t_game *game)
 		chapter[LEVEL](game, &running);
 		level_trigger(game);
 		handle_events(game, &running);
-		manage_controller(game);
 		update_entities(game);
 		render_next_frame(game);
 		debug_statements(game);
