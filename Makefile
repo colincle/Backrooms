@@ -36,12 +36,14 @@ YELLOW      = \033[0;93m
 BAR_COLOR   = \033[42m
 RESET_COLOR = \033[0m
 
-# Check if libs exist; if not, build them
-ifeq ($(wildcard $(LIBS)),)
-$(shell $(MAKE) -C vendor $(ARCH))
-endif
+# Ensure SDL libraries exist before building the game
+all: check_libs $(TARGET)
 
-all: $(TARGET)
+check_libs:
+	@if [ ! -f $(LIBS)/lib/libSDL2.a ]; then \
+		echo "$(YELLOW)Building SDL dependencies...$(DEF_COLOR)"; \
+		$(MAKE) -C vendor $(ARCH); \
+	fi
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS)
 	@mkdir -p $(@D)
@@ -73,6 +75,9 @@ $(TARGET): $(OBJ)
 	@printf "\033[1;34m ➤ Jump:\033[0m ⌨️ Space / 🎮 Cross\n"
 	@printf "\033[1;34m ➤ Crouch:\033[0m ⌨️ C / 🎮 Circle\n"
 	@printf "\033[1;34m ➤ Crawl:\033[0m ⌨️ Hold C / 🎮 Hold Circle\n"
+	@printf "\033[1;34m ➤ Quit:\033[0m ⌨️ Escape\n"
+	@printf "\n"
+	@printf "Type \"make run\" to launch the game\n"
 	@printf "\033[1;36m---------------------------------------\033[0m\n"
 
 clean:
