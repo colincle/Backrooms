@@ -3,7 +3,6 @@
 
 # include <SDL2/SDL_image.h>
 # include <SDL2/SDL_mixer.h>
-# include <SDL2/SDL_ttf.h>
 # include <SDL2/SDL.h>
 # include <sys/types.h>
 # include <sys/sysctl.h>
@@ -15,7 +14,7 @@
 
 //==============================MACROS
 // SETTINGS
-# define DOWNSCALE			3
+# define DOWNSCALE			2
 # define FOV				53
 # define FPS_CAP			121
 # define DEFAULT_SPEED		2

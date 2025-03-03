@@ -1,43 +1,25 @@
 TARGET = SDLRaycaster
 CC = gcc
-CFLAGS =	-Wall -Wextra -Wno-deprecated-declarations -arch x86_64 -Ofast -march=native -flto -ffast-math \
-			-funroll-loops -fno-exceptions -fomit-frame-pointer -mmacosx-version-min=13.0
+ARCH ?= $(shell uname -m) # Default to current architecture
+LIBS = libs
+VENDOR_MAKEFILE = vendor/Makefile
+
+CFLAGS =	-Wall -Wextra -Wno-deprecated-declarations -arch $(ARCH) -Ofast -march=native -flto -ffast-math \
+			-funroll-loops -fno-exceptions -fomit-frame-pointer -mmacosx-version-min=10.15
 
 DEBUG_FLAGS = -fsanitize=address -g
 
-LDFLAGS = -arch x86_64 -L$(LIBS)/lib -L/usr/local/lib -lpthread \
+LDFLAGS = -arch $(ARCH) -L$(LIBS)/lib -L/usr/local/lib -lpthread \
           -force_load $(LIBS)/lib/libSDL2.a \
           -force_load $(LIBS)/lib/libSDL2_image.a \
-          -force_load $(LIBS)/lib/libSDL2_ttf.a \
           -force_load $(LIBS)/lib/libSDL2_mixer.a \
-          -force_load $(LIBS)/lib/libFLAC.a \
-          -force_load $(LIBS)/lib/libmpg123.a \
-          -force_load $(LIBS)/lib/libogg.a \
-          -force_load $(LIBS)/lib/libvorbis.a \
-          -force_load $(LIBS)/lib/libvorbisfile.a \
-          -force_load $(LIBS)/lib/libopusfile.a \
-          -force_load $(LIBS)/lib/libmodplug.a \
-          -force_load $(LIBS)/lib/libxmp.a \
-          -force_load $(LIBS)/lib/libwavpack.a \
-          -force_load $(LIBS)/lib/libfluidsynth.a \
-          -force_load $(LIBS)/lib/libportaudio.a \
-          -force_load $(LIBS)/lib/libglib-2.0.a \
-          -force_load $(LIBS)/lib/libgme.a \
-          -force_load $(LIBS)/lib/libsndfile.a \
-          -force_load $(LIBS)/lib/libz.a \
-          -force_load $(LIBS)/lib/libmp3lame.a \
-          -force_load $(LIBS)/lib/libintl.a \
-          -force_load $(LIBS)/lib/libopus.a \
-          -force_load $(LIBS)/lib/libvorbisenc.a \
           -Wl,-undefined,dynamic_lookup \
-          -mmacosx-version-min=14.3 \
-          -lc++ -lpng \
+          -mmacosx-version-min=10.15 -lc++ -lpng \
           -framework Cocoa -framework IOKit -framework CoreVideo \
           -framework CoreFoundation -framework AudioToolbox -framework ForceFeedback \
           -framework GameController -framework Metal -framework CoreHaptics \
           -framework CoreAudio -framework Carbon
 
-LIBS = libs
 INCLUDE_DIR = include
 SRC_DIR = src
 OBJ_DIR = obj
@@ -53,6 +35,11 @@ BLUE        = \033[0;94m
 YELLOW      = \033[0;93m
 BAR_COLOR   = \033[42m
 RESET_COLOR = \033[0m
+
+# Check if libs exist; if not, build them
+ifeq ($(wildcard $(LIBS)),)
+$(shell $(MAKE) -C vendor $(ARCH))
+endif
 
 all: $(TARGET)
 
@@ -88,7 +75,6 @@ $(TARGET): $(OBJ)
 	@printf "\033[1;34m ➤ Crawl:\033[0m ⌨️ Hold C / 🎮 Hold Circle\n"
 	@printf "\033[1;36m---------------------------------------\033[0m\n"
 
-
 clean:
 	@rm -rf $(OBJ_DIR)
 	@echo "$(GREEN)$(TARGET) object files cleaned!$(DEF_COLOR)"
@@ -99,6 +85,12 @@ fclean: clean
 
 re: fclean all
 
+x86_64:
+	$(MAKE) ARCH=x86_64
+
+arm64:
+	$(MAKE) ARCH=arm64
+
 debug: $(OBJ)
 	@$(CC) $(DEBUG_FLAGS) $(OBJ) -o $(TARGET)
 	@echo "\n$(GREEN)Rebuilt everything for $(TARGET) in debug mode!$(DEF_COLOR)"
@@ -106,4 +98,4 @@ debug: $(OBJ)
 run:
 	@export DYLD_LIBRARY_PATH=./libs/lib:$$DYLD_LIBRARY_PATH; ./$(TARGET)
 
-.PHONY: all clean fclean re debug run
+.PHONY: all clean fclean re debug run x86_64 arm64
