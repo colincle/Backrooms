@@ -30,7 +30,7 @@ hand-written.
 **Game**
 - Five hand-made levels ("chapters") dispatched through a function-pointer table,
   with triggers that carry the player state from one level into the next.
-- Textures at multiple resolutions, and ambient plus footstep audio through
+- Textured walls, floors, and ceilings, plus ambient and footstep audio through
   SDL2_mixer.
 
 ## Controls
