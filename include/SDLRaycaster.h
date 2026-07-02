@@ -14,26 +14,26 @@
 
 //==============================MACROS
 // SETTINGS
-# define DOWNSCALE			2
+# define DOWNSCALE			1
 # define FOV				53
 # define FPS_CAP			121
 # define DEFAULT_SPEED		2
-# define MOUSE_SENSIT		0.01
+# define MOUSE_SENSIT		0.03
 # define JOY_SENSIT			2
-# define GRAVITY 			50
+# define GRAVITY 			80
 # define COLLISION_RADIUS	0.3f
 # define VSYNC				TRUE
 
 // DEBUG
 # define START_LEVEL		0
 # define SHOW_MINIMAP 		FALSE
-# define SHOW_FPS			TRUE
+# define SHOW_FPS			FALSE
 # define PRINT_ENTITIES 	FALSE
 # define PRINT_MAPS 		FALSE
 # define SHOW_POSITION		FALSE
 # define SHOW_CAM_PLANE		FALSE
 # define SHOW_DIRECTION		FALSE
-# define MINIMAP_BLOCK		20
+# define MINIMAP_BLOCK		5
 
 // MAP CHARACTERS
 # define WALL				'#'

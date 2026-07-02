@@ -1,13 +1,9 @@
-/*
-** SDLRaycaster - a from-scratch raycasting engine in C with SDL2
-** Author: Clement Colin
-*/
-
 #include <SDLRaycaster.h>
 
 static void	load_texture(t_game *game, const char *path, t_texture *dest)
 {
 	SDL_Surface	*surface;
+	SDL_Surface	*converted;
 
 	surface = IMG_Load(path);
 	if (!surface)
@@ -15,6 +11,14 @@ static void	load_texture(t_game *game, const char *path, t_texture *dest)
 		printf("IMG_Load Error: %s\n", IMG_GetError());
 		cleanup(game);
 	}
+	converted = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_ARGB8888, 0);
+	SDL_FreeSurface(surface);
+	if (!converted)
+	{
+		printf("SDL_ConvertSurfaceFormat Error: %s\n", SDL_GetError());
+		cleanup(game);
+	}
+	surface = converted;
 	dest->texture = SDL_CreateTextureFromSurface(game->renderer, surface);
 	if (!dest->texture)
 	{

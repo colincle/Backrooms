@@ -1,8 +1,3 @@
-/*
-** SDLRaycaster - a from-scratch raycasting engine in C with SDL2
-** Author: Clement Colin
-*/
-
 #include <SDLRaycaster.h>
 
 static void	first_time_chapter_called(t_game *game, int *first, int *running)

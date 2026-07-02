@@ -1,8 +1,3 @@
-/*
-** SDLRaycaster - a from-scratch raycasting engine in C with SDL2
-** Author: Clement Colin
-*/
-
 #include <SDLRaycaster.h>
 
 void	handle_events(t_game *game, int *running)
@@ -33,14 +28,6 @@ void	handle_events(t_game *game, int *running)
 				CROUCH = STANDING;
 				JUMP = JUMP_UP;
 			}
-			else if (EVENT.key.keysym.sym == SDLK_k && !JUMP) // to be removed
-				printf("PLAYER_HEIGHT = %d\n", --PLAYER_HEIGHT); // to be removed
-			else if (EVENT.key.keysym.sym == SDLK_i && !JUMP) // to be removed
-				printf("PLAYER_HEIGHT = %d\n", ++PLAYER_HEIGHT); // to be removed
-			else if (EVENT.key.keysym.sym == SDLK_l && !JUMP) // to be removed
-				printf("PLAYER_HEIGHT = %d\n", PLAYER_HEIGHT -= 10); // to be removed
-			else if (EVENT.key.keysym.sym == SDLK_o && !JUMP) // to be removed
-				printf("PLAYER_HEIGHT = %d\n", PLAYER_HEIGHT += 10); // to be removed
 			else if (EVENT.key.keysym.sym == SDLK_ESCAPE)
 				*running = 0;
 		}

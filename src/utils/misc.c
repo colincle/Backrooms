@@ -1,8 +1,3 @@
-/*
-** SDLRaycaster - a from-scratch raycasting engine in C with SDL2
-** Author: Clement Colin
-*/
-
 #include <SDLRaycaster.h>
 
 char	*strjoin(const char *s1, const char *s2)

@@ -1,8 +1,3 @@
-/*
-** SDLRaycaster - a from-scratch raycasting engine in C with SDL2
-** Author: Clement Colin
-*/
-
 #include <SDLRaycaster.h>
 
 void	init_graphics(t_game *game)
@@ -31,6 +26,7 @@ void	init_graphics(t_game *game)
 	TEXTURE_WIDTH = WIND_WIDTH / DOWNSCALE;
 	TEXTURE_HEIGHT = WIND_HEIGHT / DOWNSCALE;
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	SDL_StopTextInput();
 }
 
 void	pixel_buffers_init(t_game *game)

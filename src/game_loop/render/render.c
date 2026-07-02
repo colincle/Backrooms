@@ -1,8 +1,3 @@
-/*
-** SDLRaycaster - a from-scratch raycasting engine in C with SDL2
-** Author: Clement Colin
-*/
-
 #include <SDLRaycaster.h>
 
 static void	render_mini_rays(t_game *game, t_mini_ray **head, void *pixels)
@@ -29,8 +24,9 @@ static void	render_mini_rays(t_game *game, t_mini_ray **head, void *pixels)
 	*head = NULL;
 }
 
-static void	rendering_threads(t_rendering_threads *thread)
+static int	rendering_threads(void *arg)
 {
+	t_rendering_threads	*thread = arg;
 	t_raycaster			r;
 	t_floor_ceiling		f;
 	int					end_x;
@@ -50,6 +46,7 @@ static void	rendering_threads(t_rendering_threads *thread)
 	}
 	cast_floor_and_ceiling(thread->game, &f, thread);
 	cast_offset_height_floor_and_ceiling(thread->game, &f, thread);
+	return (0);
 }
 
 static void	draw_scene(t_game *game)
@@ -66,7 +63,7 @@ static void	draw_scene(t_game *game)
 		thread[i].total_threads = game->P_cores;
 		thread[i].start = (TEXTURE_WIDTH * i) / game->P_cores;
 		thread[i].end = (TEXTURE_WIDTH * (i + 1)) / game->P_cores;
-		threads[i] = SDL_CreateThread((SDL_ThreadFunction)rendering_threads, "render", &thread[i]);
+		threads[i] = SDL_CreateThread(rendering_threads, "render", &thread[i]);
 	}
 	for (int i = 0; i < game->P_cores; i++)
 	{

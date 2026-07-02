@@ -5,7 +5,12 @@ no raycasting library, just SDL2 for the window, input, image loading, and audio
 Everything from the renderer to the movement and collision system is
 hand-written.
 
-![SDLRaycaster](screenshots/screenshot.png)
+![SDLRaycaster](screenshots/screenshot_1.png)
+![SDLRaycaster](screenshots/screenshot_2.png)
+
+> **Note.** The projection is not perfectly correct, so the perspective can look a
+> little off, especially while moving and looking around. Some people may find it
+> causes motion sickness. Take it slow if you are sensitive to that.
 
 ## Features
 
@@ -81,8 +86,39 @@ include/SDLRaycaster.h  all types, settings, and prototypes
 assets/                 textures, sounds, and the five maps
 ```
 
-Tuning knobs (FOV, speed, gravity, downscale, FPS cap, debug overlays) live at
-the top of [include/SDLRaycaster.h](include/SDLRaycaster.h).
+## Configuration
+
+Everything tunable is a `#define` at the top of
+[include/SDLRaycaster.h](include/SDLRaycaster.h). Change a value and rebuild with
+`make re`.
+
+**Settings**
+
+| Define | Default | What it does |
+|---|---|---|
+| `DOWNSCALE` | 1 | Internal render-resolution divisor. The scene is drawn at the window size divided by this, then scaled up to fill it. 1 is full resolution, higher is faster but blockier. |
+| `FOV` | 53 | Field of view, in degrees. |
+| `FPS_CAP` | 121 | Upper limit on frames per second. |
+| `DEFAULT_SPEED` | 2 | Base walking speed. Running raises it. |
+| `MOUSE_SENSIT` | 0.03 | Mouse look sensitivity. |
+| `JOY_SENSIT` | 2 | Gamepad stick look sensitivity. |
+| `GRAVITY` | 80 | Strength of gravity applied while falling. |
+| `COLLISION_RADIUS` | 0.3 | Player collision radius, in map cells. |
+| `VSYNC` | TRUE | Sync rendering to the display refresh rate. |
+
+**Debug flags** (all off by default)
+
+| Define | What it does |
+|---|---|
+| `START_LEVEL` | Which level (0 to 4) to start on. |
+| `SHOW_MINIMAP` | Draw the top-down minimap overlay. |
+| `MINIMAP_BLOCK` | Size of each minimap cell, in pixels. |
+| `SHOW_FPS` | Print the average FPS to the terminal twice a second. |
+| `SHOW_POSITION` | Print the player position each frame. |
+| `SHOW_DIRECTION` | Print the player facing vector each frame. |
+| `SHOW_CAM_PLANE` | Print the camera plane vector each frame. |
+| `PRINT_ENTITIES` | Print the parsed entities once at startup. |
+| `PRINT_MAPS` | Print the parsed maps once at startup. |
 
 ## License
 
