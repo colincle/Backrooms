@@ -5,8 +5,8 @@ no raycasting library, just SDL2 for the window, input, image loading, and audio
 Everything from the renderer to the movement and collision system is
 hand-written.
 
-![SDLRaycaster](screenshots/screensho_1.png)
-![SDLRaycaster](screenshots/screensho_2.png)
+![SDLRaycaster](screenshots/screenshot_1.png)
+![SDLRaycaster](screenshots/screenshot_2.png)
 
 > **Note.** The projection is not perfectly correct, so the perspective can look a
 > little off, especially while moving and looking around. Some people may find it
