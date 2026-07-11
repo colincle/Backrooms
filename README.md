@@ -120,6 +120,12 @@ Everything tunable is a `#define` at the top of
 | `PRINT_ENTITIES` | Print the parsed entities once at startup. |
 | `PRINT_MAPS` | Print the parsed maps once at startup. |
 
+## Credits
+
+Wall, floor, and ceiling textures are from the
+[Tiny Texture Pack 2](https://screamingbrainstudios.itch.io/tiny-texture-pack-2)
+by Screaming Brain Studios.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).
