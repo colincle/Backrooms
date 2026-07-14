@@ -2,6 +2,7 @@
 obj/
 SDLRaycaster
 *.o
+web/dist/
 
 # Generated dependency libs / local SDL builds
 libs/

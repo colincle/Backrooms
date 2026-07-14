@@ -3,7 +3,8 @@
 A first-person raycasting engine written from scratch in C. No game engine and
 no raycasting library, just SDL2 for the window, input, image loading, and audio.
 Everything from the renderer to the movement and collision system is
-hand-written.
+hand-written. It builds both as a native macOS app and as a WebAssembly page
+that runs in the browser, from the same sources.
 
 ![SDLRaycaster](screenshots/screenshot_1.png)
 ![SDLRaycaster](screenshots/screenshot_2.png)
@@ -61,6 +62,12 @@ Install the dependencies with Homebrew:
 brew install sdl2 sdl2_image sdl2_mixer
 ```
 
+The web build only needs Emscripten, which brings its own SDL2 ports:
+
+```sh
+brew install emscripten
+```
+
 ## Build and run
 
 ```sh
@@ -71,6 +78,35 @@ make run    # build and launch
 `make clean` removes the object files, `make fclean` also removes the binary,
 `make re` rebuilds from scratch, and `make debug` builds with the address
 sanitizer.
+
+## Web build
+
+```sh
+make web    # compile to WebAssembly into web/dist/
+make serve  # build and serve it at http://localhost:8000
+```
+
+`make web` compiles the same sources with Emscripten and produces a
+self-contained page in `web/dist` (html, js, wasm, plus a data bundle with the
+textures, sounds, and maps). Upload that folder to any static host to put the
+game on a website, or embed it in a page with an iframe:
+
+```html
+<iframe src="/path/to/dist/index.html" width="960" height="620"></iframe>
+```
+
+It has to be served over HTTP, browsers will not run the wasm from a `file://`
+URL. `make webclean` removes the web output. Pick another port with
+`make serve WEB_PORT=9000`.
+
+A few things differ from the native build, handled by `__EMSCRIPTEN__` guards
+in the sources. The browser drives the frame timing through
+requestAnimationFrame instead of the FPS cap, rendering runs on a single
+thread because browser threading needs special hosting headers, the canvas
+uses a fixed resolution (`WEB_WIDTH` x `WEB_HEIGHT` in the header) instead of
+fullscreen, and Escape releases the mouse instead of quitting. Clicking the
+canvas captures the mouse, and the page template lives in
+[web/shell.html](web/shell.html).
 
 ## Layout
 
@@ -84,6 +120,7 @@ src/utils/          map reading and helpers
 src/debug/          optional minimap and on-screen debug output
 include/SDLRaycaster.h  all types, settings, and prototypes
 assets/                 textures, sounds, and the five maps
+web/shell.html          page template for the browser build
 ```
 
 ## Configuration
@@ -105,6 +142,7 @@ Everything tunable is a `#define` at the top of
 | `GRAVITY` | 80 | Strength of gravity applied while falling. |
 | `COLLISION_RADIUS` | 0.3 | Player collision radius, in map cells. |
 | `VSYNC` | TRUE | Sync rendering to the display refresh rate. |
+| `WEB_WIDTH` / `WEB_HEIGHT` | 960 x 540 | Canvas resolution of the web build. |
 
 **Debug flags** (all off by default)
 

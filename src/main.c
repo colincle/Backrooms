@@ -30,24 +30,40 @@ static void	level_trigger(t_game *game)
 	}
 }
 
+static void	game_frame(void *arg)
+{
+	static void	(*chapter[])(t_game *game, int *running) = {chapter_1, chapter_2, chapter_3, chapter_4, chapter_5};
+	t_main_loop	*loop = arg;
+	t_game		*game = loop->game;
+
+	sounds(game);
+	chapter[LEVEL](game, &loop->running);
+	level_trigger(game);
+	handle_events(game, &loop->running);
+	update_entities(game);
+	render_next_frame(game);
+	debug_statements(game);
+	manage_fps(game);
+#ifdef __EMSCRIPTEN__
+	if (!loop->running)
+		emscripten_cancel_main_loop();
+#endif
+}
+
 static void	game_loop(t_game *game)
 {
-	int		running;
-	void	(*chapter[])(t_game *game, int *running) = {chapter_1, chapter_2, chapter_3, chapter_4, chapter_5};
+	// static: under Emscripten this function returns while frames keep firing
+	static t_main_loop	loop;
 
-	running = TRUE;
+	loop.game = game;
+	loop.running = TRUE;
 	LEVEL = START_LEVEL;
-	while (running)
-	{
-		sounds(game);
-		chapter[LEVEL](game, &running);
-		level_trigger(game);
-		handle_events(game, &running);
-		update_entities(game);
-		render_next_frame(game);
-		debug_statements(game);
-		manage_fps(game);
-	}
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop_arg(game_frame, &loop, 0, TRUE);
+#else
+	while (loop.running)
+		game_frame(&loop);
+#endif
 }
 
 int	main(void)

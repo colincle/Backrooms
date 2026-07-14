@@ -54,7 +54,9 @@ static void	draw_scene(t_game *game)
 	int					pitch;
 	Uint32				*pixels;
 	t_rendering_threads	thread[game->P_cores];
+#ifndef __EMSCRIPTEN__
 	SDL_Thread			*threads[game->P_cores];
+#endif
 
 	for (int i = 0; i < game->P_cores; i++)
 	{
@@ -63,12 +65,18 @@ static void	draw_scene(t_game *game)
 		thread[i].total_threads = game->P_cores;
 		thread[i].start = (TEXTURE_WIDTH * i) / game->P_cores;
 		thread[i].end = (TEXTURE_WIDTH * (i + 1)) / game->P_cores;
+#ifdef __EMSCRIPTEN__
+		rendering_threads(&thread[i]);
+#else
 		threads[i] = SDL_CreateThread(rendering_threads, "render", &thread[i]);
+#endif
 	}
+#ifndef __EMSCRIPTEN__
 	for (int i = 0; i < game->P_cores; i++)
 	{
 		SDL_WaitThread(threads[i], NULL);
 	}
+#endif
 	if (!game->textures.screen_texture)
 		cleanup(game);
 	if (SDL_LockTexture(game->textures.screen_texture, NULL, (void **)&pixels, &pitch) != 0)

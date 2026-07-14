@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>SDLRaycaster</title>
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		html, body { height: 100%; }
+		body {
+			background: #101014;
+			color: #d8d8de;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 14px;
+			padding: 16px;
+		}
+		.frame {
+			position: relative;
+			width: min(100%, 960px);
+			aspect-ratio: 16 / 9;
+			background: #000;
+			border-radius: 6px;
+			overflow: hidden;
+		}
+		canvas {
+			display: block;
+			width: 100% !important;
+			height: 100% !important;
+			outline: none;
+		}
+		#overlay {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: rgba(16, 16, 20, 0.92);
+			font-size: 15px;
+			letter-spacing: 0.02em;
+		}
+		.hint {
+			font-size: 13px;
+			color: #86868f;
+			text-align: center;
+			line-height: 1.6;
+			max-width: 640px;
+		}
+		.hint b { color: #b8b8c0; font-weight: 600; }
+	</style>
+</head>
+<body>
+	<div class="frame">
+		<canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+		<div id="overlay"><span id="status">Downloading...</span></div>
+	</div>
+	<p class="hint">
+		<b>Click the view</b> to capture the mouse, <b>Esc</b> releases it.<br>
+		<b>WASD</b> move &nbsp;·&nbsp; <b>Mouse</b> look &nbsp;·&nbsp; <b>Shift</b> run
+		&nbsp;·&nbsp; <b>Space</b> jump &nbsp;·&nbsp; <b>C</b> crouch (hold to crawl)
+	</p>
+	<script>
+		var statusElement = document.getElementById('status');
+		var overlayElement = document.getElementById('overlay');
+		var Module = {
+			canvas: (function() {
+				var canvas = document.getElementById('canvas');
+				canvas.addEventListener('webglcontextlost', function(e) {
+					e.preventDefault();
+					Module.setStatus('Graphics context lost, please reload the page.');
+				}, false);
+				return canvas;
+			})(),
+			setStatus: function(text) {
+				if (text) {
+					statusElement.textContent = text;
+					overlayElement.style.display = 'flex';
+				} else {
+					overlayElement.style.display = 'none';
+				}
+			},
+			totalDependencies: 0,
+			monitorRunDependencies: function(left) {
+				this.totalDependencies = Math.max(this.totalDependencies, left);
+				Module.setStatus(left
+					? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')'
+					: '');
+			}
+		};
+	</script>
+	{{{ SCRIPT }}}
+</body>
+</html>

@@ -1,5 +1,10 @@
 #include <SDLRaycaster.h>
 
+// Emscripten's limits.h does not define OPEN_MAX
+#ifndef OPEN_MAX
+# define OPEN_MAX 256
+#endif
+
 static char	*read_from_file(int fd, char *leftover)
 {
 	char		*buffer;

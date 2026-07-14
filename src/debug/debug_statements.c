@@ -1,4 +1,5 @@
 #include <SDLRaycaster.h>
+#include <sys/time.h>
 
 void	debug_statements(t_game *game)
 {

@@ -5,12 +5,16 @@
 # include <SDL2/SDL_mixer.h>
 # include <SDL2/SDL.h>
 # include <sys/types.h>
-# include <sys/sysctl.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <limits.h>
 # include <stdio.h>
 # include <fcntl.h>
+# ifdef __EMSCRIPTEN__
+#  include <emscripten.h>
+# else
+#  include <sys/sysctl.h>
+# endif
 
 //==============================MACROS
 // SETTINGS
@@ -23,6 +27,8 @@
 # define GRAVITY 			80
 # define COLLISION_RADIUS	0.3f
 # define VSYNC				TRUE
+# define WEB_WIDTH			960
+# define WEB_HEIGHT			540
 
 // DEBUG
 # define START_LEVEL		0
@@ -294,6 +300,12 @@ typedef struct s_rendering_threads
 	int						end;
 	t_game					*game;
 }							t_rendering_threads;
+
+typedef struct s_main_loop
+{
+	t_game					*game;
+	int						running;
+}							t_main_loop;
 
 // STRUCT ACCESS MACROS
 # define CAM_SHIFT			game->player[LEVEL]->camera_shift

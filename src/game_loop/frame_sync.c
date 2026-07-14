@@ -1,5 +1,29 @@
 #include <SDLRaycaster.h>
 
+#ifdef __EMSCRIPTEN__
+
+// the browser paces frames itself, so only measure the time between them
+void	manage_fps(t_game *game)
+{
+	static Uint64	last_time = 0;
+	Uint64			now;
+	double			elapsed_time;
+	double			frequency;
+
+	frequency = (double)SDL_GetPerformanceFrequency();
+	now = SDL_GetPerformanceCounter();
+	if (last_time == 0)
+		last_time = now;
+	elapsed_time = (double)(now - last_time) / frequency;
+	if (elapsed_time < 0.0001)
+		elapsed_time = 1.0 / (double)FPS_CAP;
+	game->fps = 1.0 / elapsed_time;
+	game->frame_time = elapsed_time;
+	last_time = now;
+}
+
+#else
+
 void	manage_fps(t_game *game)
 {
 	static Uint64	last_time = 0;
@@ -27,3 +51,5 @@ void	manage_fps(t_game *game)
 	game->frame_time = total_frame_time;
 	last_time = end_time;
 }
+
+#endif

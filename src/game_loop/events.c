@@ -28,8 +28,11 @@ void	handle_events(t_game *game, int *running)
 				CROUCH = STANDING;
 				JUMP = JUMP_UP;
 			}
+#ifndef __EMSCRIPTEN__
+			// in the browser, escape only releases the mouse
 			else if (EVENT.key.keysym.sym == SDLK_ESCAPE)
 				*running = 0;
+#endif
 		}
 		else if (EVENT.type == SDL_KEYUP)
 		{

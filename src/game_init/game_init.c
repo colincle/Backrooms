@@ -13,6 +13,10 @@ int	set_height(t_game *game, float percentage)
 
 static void	get_P_cores(t_game *game)
 {
+#ifdef __EMSCRIPTEN__
+	// browser threads need special hosting headers, render on a single one
+	game->P_cores = 1;
+#else
 	int		pcores = 0;
 	size_t	size = sizeof(pcores);
 
@@ -20,6 +24,7 @@ static void	get_P_cores(t_game *game)
 		game->P_cores = pcores;
 	else
 		game->P_cores = 1;
+#endif
 }
 
 static t_game	*game_struct_init(void)

@@ -15,6 +15,20 @@ LDFLAGS = $(SDL_LIBS)
 
 DEBUG_FLAGS = -fsanitize=address -g
 
+# Web build: emcc compiles the same sources to WebAssembly and bundles the
+# assets into a self-contained page in web/dist, ready for any static host.
+EMCC     = emcc
+WEB_DIR  = web
+WEB_OUT  = $(WEB_DIR)/dist
+WEB_PORT ?= 8000
+EM_FLAGS = -O3 -Wall -Wextra -I$(INCLUDE_DIR) \
+           -sUSE_SDL=2 \
+           -sUSE_SDL_IMAGE=2 -sSDL2_IMAGE_FORMATS='["png"]' \
+           -sUSE_SDL_MIXER=2 \
+           -sINITIAL_MEMORY=64MB \
+           --preload-file assets --exclude-file "*.DS_Store" \
+           --shell-file $(WEB_DIR)/shell.html
+
 SRC = $(shell find $(SRC_DIR) -type f -name "*.c")
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
@@ -60,6 +74,18 @@ $(TARGET): $(OBJ)
 	@printf "Type \"make run\" to launch the game\n"
 	@printf "\033[1;36m---------------------------------------\033[0m\n"
 
+web: $(WEB_OUT)/index.html
+
+$(WEB_OUT)/index.html: $(SRC) $(HEADERS) $(WEB_DIR)/shell.html
+	@mkdir -p $(WEB_OUT)
+	@printf "$(YELLOW)Compiling web build with emcc...$(DEF_COLOR)\n"
+	@$(EMCC) $(EM_FLAGS) $(SRC) -o $@
+	@printf "$(GREEN)Web build ready in $(WEB_OUT)/$(DEF_COLOR)\n"
+	@printf "Type \"make serve\" to try it at http://localhost:$(WEB_PORT)\n"
+
+serve: web
+	@cd $(WEB_OUT) && python3 -m http.server $(WEB_PORT)
+
 clean:
 	@rm -rf $(OBJ_DIR)
 	@echo "$(GREEN)$(TARGET) object files cleaned!$(DEF_COLOR)"
@@ -67,6 +93,10 @@ clean:
 fclean: clean
 	@rm -rf $(TARGET)
 	@echo "$(GREEN)$(TARGET) executable files cleaned!$(DEF_COLOR)"
+
+webclean:
+	@rm -rf $(WEB_OUT)
+	@echo "$(GREEN)web build cleaned!$(DEF_COLOR)"
 
 re: fclean all
 
@@ -76,4 +106,4 @@ debug: re
 run: all
 	@./$(TARGET)
 
-.PHONY: all clean fclean re debug run
+.PHONY: all web serve clean fclean webclean re debug run
