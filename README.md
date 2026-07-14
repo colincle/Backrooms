@@ -6,6 +6,9 @@ Everything from the renderer to the movement and collision system is
 hand-written. It builds both as a native macOS app and as a WebAssembly page
 that runs in the browser, from the same sources.
 
+**[Play it in your browser](https://clementcolin.com/demos/sdlraycaster/)**,
+no install needed. The web build is deployed on my portfolio site.
+
 ![SDLRaycaster](screenshots/screenshot_1.png)
 ![SDLRaycaster](screenshots/screenshot_2.png)
 
@@ -34,8 +37,10 @@ that runs in the browser, from the same sources.
 - Circle-based collision against the map.
 
 **Game**
-- Five hand-made levels ("chapters") dispatched through a function-pointer table,
-  with triggers that carry the player state from one level into the next.
+- Three hand-made levels ("chapters") dispatched through a function-pointer
+  table, with triggers that carry the player state from one level into the
+  next. Two more chapters exist in the code but cannot be reached in normal
+  play, only through the `START_LEVEL` debug flag.
 - Textured walls, floors, and ceilings, plus footstep audio through SDL2_mixer.
 
 ## Controls
@@ -119,7 +124,7 @@ src/controls/       keyboard and gamepad input
 src/utils/          map reading and helpers
 src/debug/          optional minimap and on-screen debug output
 include/SDLRaycaster.h  all types, settings, and prototypes
-assets/                 textures, sounds, and the five maps
+assets/                 textures, sounds, and the maps
 web/shell.html          page template for the browser build
 ```
 
