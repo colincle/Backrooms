@@ -72,6 +72,15 @@
 					e.preventDefault();
 					Module.setStatus('Graphics context lost, please reload the page.');
 				}, false);
+				// Keyboard events are bound to the canvas (see the
+				// SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT hint in the C code), so it
+				// must hold focus for keys to register. Clicking to capture the
+				// mouse does not reliably focus it inside an iframe, so do it
+				// explicitly on click and again whenever pointer lock engages.
+				canvas.addEventListener('mousedown', function() { canvas.focus(); });
+				document.addEventListener('pointerlockchange', function() {
+					if (document.pointerLockElement === canvas) canvas.focus();
+				});
 				return canvas;
 			})(),
 			setStatus: function(text) {

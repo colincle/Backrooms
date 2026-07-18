@@ -16,6 +16,14 @@
 
 void	init_graphics(t_game *game)
 {
+#ifdef __EMSCRIPTEN__
+	// Bind keyboard events to the canvas instead of the whole document (SDL's
+	// default). Inside the portfolio's iframe, clicking the canvas takes pointer
+	// lock and focus, so listening on the same element makes keyboard capture
+	// follow the mouse reliably instead of intermittently failing when document
+	// focus lands elsewhere. Must be set before SDL_Init registers the listeners.
+	SDL_SetHint(SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT, "#canvas");
+#endif
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		printf("SDL_Init Error: %s\n", SDL_GetError());
